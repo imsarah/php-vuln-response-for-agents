@@ -2,9 +2,9 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.5 — adds the worked example, security policy, contributing rules, badges and a verification date; 1.3 was the review-fix revision, 1.2 lab validation, 1.1 first external review, 1.0 initial.
+Version 1.6 — adds WORDPRESS.md (the WordPress patch procedure). Earlier: 1.5 worked example/security policy, 1.3 review fixes, 1.2 lab validation, 1.1 first review, 1.0 initial.
 
-**Install:** [INSTALL.md](INSTALL.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
+**Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -149,7 +149,7 @@ Give these steps in the user's language, in this order, and warn about the inter
 - **A patch does not prove immunity.** A version bump fixes the CVE it was released for — the specific memory-safety mechanism, not every route that looks similar. Public PoCs written against the pre-patch behaviour may keep working against the patched release, because they attack a *different* chain (see Phase 9b). Report "patched for CVE-X per advisory" and keep the configuration mitigation; never report "no longer exploitable".
 - Point the user at `php.net/supported-versions.php` instead of hardcoding "8.2+".
 - An EOL branch will never be patched — the site must move to a supported branch. Say so, including "plugins may break", and require a backup plus a maintenance window.
-- **WordPress-layer hardening**, because plugins are the usual entry point: update core/plugins/themes, remove unused plugins, `DISALLOW_FILE_EDIT`, deny PHP execution in `uploads/`, audit administrators, keep a restore point.
+- **WordPress sites have their own patch procedure** — core, plugins, themes, and the WordPress-specific traps (extension reset, pending DB upgrades, a plugin major version breaking a theme). Follow [WORDPRESS.md](WORDPRESS.md) after the PHP branch is patched; it covers the wp-cli commands, the staging/prefix trick, pinning a plugin back, and the failure modes. The minimum: update core/plugins/themes, delete unused plugins, `DISALLOW_FILE_EDIT`, deny PHP in `uploads/`, audit administrators, keep a restore point.
 - Re-check after the host updates: probe again, report version and advisory.
 
 ## Phase 9b — Validate against a public exploit, in a lab only (optional)

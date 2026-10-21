@@ -2,6 +2,11 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.6 — 2026-10-21
+
+- `WORDPRESS.md`: the WordPress half of the procedure, kept separate because it is a different job from patching the PHP branch — pre-flight checks, staging via a database prefix, `wp-cli` update/rollback commands, pinning a plugin whose major version breaks a theme, site hardening, and a WordPress-specific failure table.
+- `GUIDE.md` Phase 9 and the README now point at it.
+
 ## 1.5 — 2026-10-21
 
 Third review round (marginal-gain items):

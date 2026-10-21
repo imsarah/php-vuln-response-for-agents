@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.6-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -59,6 +59,7 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 - Raw markdown: [`GUIDE.md`](GUIDE.md)
 - Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
 - Worked example (redacted real session): [EXAMPLE.md](EXAMPLE.md)
+- WordPress patch procedure: [WORDPRESS.md](WORDPRESS.md)
 - Chinese: [廣東話](README.yue.md) · [繁體中文](README.zh-Hant.md)
 
 ## What it covers
@@ -71,6 +72,7 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 - Writing config safely, and verifying without fooling yourself (cache, TTL, body hashes)
 - Telling mitigation apart from a real patch, including backported vendor builds
 - Validating a claim against a public PoC **in a throwaway lab**, and reading the result honestly (a patch is not immunity)
+- A dedicated WordPress procedure ([WORDPRESS.md](WORDPRESS.md)): pre-flight, patching core/plugins/themes, pinning a broken plugin back, hardening, and the failure modes
 - A failure-mode table that maps symptoms to what they actually mean
 
 ## Install as a skill
@@ -83,7 +85,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.5**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.6**.
 
 ## Licence
 
