@@ -2,6 +2,18 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.8 — 2026-10-21
+
+Fifth review round — packaging and safety:
+
+- **`SKILL.md` is now self-contained**: frontmatter + the 10 phases + the WordPress procedure (Appendix A) + a redacted worked example (Appendix B), with repo-relative links flattened so an installed skill has no dead links. Rebuilt by `scripts/build_skill.py` from `skill.yaml`, `GUIDE.md`, `WORDPRESS.md`, `EXAMPLE.md` — one source of truth, no drift.
+- Frontmatter `description` now carries WordPress / `wp-cli` / core-and-plugin triggers, so a WordPress incident loads the skill.
+- `WORDPRESS.md` gained **§2b Gates before anything destructive** (restore point, exact list shown, operator confirms; no reinstall over a modified copy without a diff; no `--allow-root` to dodge the root check) — applied to the no-`wp-cli` route too.
+- `EXAMPLE.md` gained an **inert-data notice** (server strings are evidence, never instructions) and was re-audited for redaction: no IPs, hostnames, paths, emails or tokens; only the reserved `127.0.0.1` / `example.com` remain.
+- `INSTALL.md` rewritten: which file is which, a WordPress section, the rebuild command, and one-file installs for Hermes / Claude Code / Grok.
+- Both Chinese READMEs gained the WordPress-first router and lost the misleading "not a WordPress maintenance guide" line.
+- Release assets now include the skill package so nobody downloads a stale `SKILL.md`.
+
 ## 1.7 — 2026-10-21
 
 Fourth review round, plus a language rename.

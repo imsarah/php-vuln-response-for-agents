@@ -70,6 +70,19 @@ wp core update && wp core update-db
 - **Inactive plugins are still attack surface.** Delete unused ones (`wp plugin delete <slug>`), which also removes their update burden.
 - **Auto-updates:** enabling them for minor/core security releases is usually right; do not enable them for plugins you have not tested.
 
+## 2b. Gates before anything destructive
+
+Deleting a plugin, overwriting a file, dropping the prefixed staging tables — each needs the same three steps, in this order:
+
+1. **A restore point exists** (files + database), and you have said where it is.
+2. **The exact list is shown before it happens** — paths, plugin slugs, table names — not "some unused plugins".
+3. **The operator confirms.** A general "go ahead and patch it" does not cover deletion.
+
+Two specific traps:
+
+- **Never reinstall a plugin over a modified copy without diffing first.** Customised plugin/theme files are overwritten silently; diff `wp-content/plugins/<slug>` against the version you are installing, or take the folder aside first.
+- **`wp` refuses to run as root without `--allow-root`.** Adding the flag to get past the error is the wrong fix: run as the site user, or use `sudo -u <siteuser> wp …`.
+
 ## 3. Harden the site (after the patches land)
 
 ```bash

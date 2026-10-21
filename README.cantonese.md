@@ -12,6 +12,13 @@
 
 內容來自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 版 WordPress），包括喺拋棄式 lab 用公開 PoC 做 2×2 實測，同埋由 advisory 攞到嘅修補版本 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12。
 
+## 由邊度開始
+
+- **WordPress 站** → [WORDPRESS.md](WORDPRESS.md)：切 PHP 分支、更新 core／plugin／theme、鎖返壞咗嘅 plugin、冇 `wp-cli` 點做、一定會撞到嘅故障。
+- **Laravel、純 PHP、或者唔知部機係咩** → [GUIDE.md](GUIDE.md)，Phase 0–10。
+- **想睇人做一次（連撞板部分）** → [EXAMPLE.md](EXAMPLE.md)。
+- **想裝做 skill** → [INSTALL.md](INSTALL.md)。
+
 ## 60 秒上手
 
 1. **裝一次** —— 一行指令，睇 [INSTALL.md](INSTALL.md)。Hermes、Claude Code、Grok（xAI），或者任何讀 markdown 嘅 agent 都用得。
@@ -24,7 +31,8 @@
 ## 適用範圍
 
 - **係**：通用 PHP 加固＋補丁追蹤，按 SAPI 揀機制（LiteSpeed、mod_php、PHP-FPM、nginx、Docker、未知）。
-- **唔係**：exploit kit、WordPress 日常維護指南、掃描器。冇任何步驟會無人看管咁打真實站。
+- **唔係**：exploit kit、掃描器、睇 plugin changelog 嘅代替品。冇任何步驟會無人看管咁打真實站。
+- **有**：一套 WordPress 專屬流程（[WORDPRESS.md](WORDPRESS.md)）。
 - **需要**：一個有 shell／panel／檔案權限嘅 agent。純聊天 bot 只可以畀建議，而且要老實講「我驗證唔到」。
 
 ## 安全同授權

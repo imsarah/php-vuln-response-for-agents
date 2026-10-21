@@ -12,6 +12,13 @@
 
 內容源自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 化的 WordPress），包含在拋棄式實驗環境中以公開 PoC 進行的 2×2 實測，以及取自上述公告的修補版本 8.2.35／8.3.36／8.4.27／8.5.12。
 
+## 從這裡開始
+
+- **WordPress 網站** → [WORDPRESS.md](WORDPRESS.md)：PHP 分支切換、核心／外掛／佈景主題更新、損壞外掛的回退固定、沒有 `wp-cli` 時的做法，以及必然遇到的故障模式。
+- **Laravel、原生 PHP，或不確定主機類型** → [GUIDE.md](GUIDE.md)，第 0–10 階段。
+- **想看一次完整實作（含踩過的地雷）** → [EXAMPLE.md](EXAMPLE.md)。
+- **想安裝為 skill** → [INSTALL.md](INSTALL.md)。
+
 ## 60 秒上手
 
 1. **安裝一次** —— 單一指令，見 [INSTALL.md](INSTALL.md)。適用於 Hermes、Claude Code、Grok（xAI），或任何能讀取 markdown 的 agent。
@@ -24,7 +31,8 @@
 ## 適用範圍
 
 - **是**：通用 PHP 加固與修補追蹤，依 SAPI 選擇機制（LiteSpeed、mod_php、PHP-FPM、nginx、Docker、未知）。
-- **不是**：exploit kit、WordPress 日常維護指南或掃描器。沒有任何步驟會在無人監督下對正式網站執行。
+- **不是**：exploit kit、掃描器，或閱讀外掛 changelog 的替代品。沒有任何步驟會在無人監督下對正式網站執行。
+- **是**：一套 WordPress 專屬修補流程（[WORDPRESS.md](WORDPRESS.md)）。
 - **需要**：具備 shell／控制台／檔案權限的 agent。純聊天型 bot 僅能提供建議，並應明確表示無法驗證。
 
 ## 安全與授權

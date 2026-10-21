@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.7-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.8-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -86,7 +86,7 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 
 ## Install as a skill
 
-See [INSTALL.md](INSTALL.md) for Hermes, Claude Code, Grok (xAI) and generic agents.
+`SKILL.md` is self-contained — the 10 phases, the WordPress appendix and a redacted worked example in one file, so an agent that installs only that file chases no dead links. See [INSTALL.md](INSTALL.md) for Hermes, Claude Code, Grok (xAI) and generic agents.
 
 ## Using it with an agent
 
@@ -94,7 +94,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.7**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.8**.
 
 ## Licence
 

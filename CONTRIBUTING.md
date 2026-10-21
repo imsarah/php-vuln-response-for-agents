@@ -8,7 +8,8 @@ Corrections are welcome, especially ones backed by a primary source (a vendor ad
 2. **No invented versions, CVEs or severity.** If you cannot cite it, do not add it.
 3. **Say when it was measured.** New mechanism rows should name the SAPI and how the value was read back, not "this works".
 4. **Do not add anything that acts on a live site unattended.** This playbook is for an authorised operator; steps that run exploit code against production will be rejected.
-5. Update `CHANGELOG.md` in the same PR. `CHANGELOG.md` is the canonical history; the summary in `README.md` is a pointer to it and must not be edited independently.
+5. **Regenerate `SKILL.md`** (`python3 scripts/build_skill.py`) if you touched `GUIDE.md`, `WORDPRESS.md`, `EXAMPLE.md` or `skill.yaml`; a PR that edits a source file without regenerating the skill is incomplete.
+6. Update `CHANGELOG.md` in the same PR. `CHANGELOG.md` is the canonical history; the summary in `README.md` is a pointer to it and must not be edited independently.
 
 ## Review
 
