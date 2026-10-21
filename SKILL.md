@@ -1,5 +1,5 @@
 ---
-name: php-vuln-response-for-agents
+name: php2shell-response-playbook
 description: Use when hardening or patching PHP sites you did not build.
 version: 1.2.0
 author: Hermes Agent contributors

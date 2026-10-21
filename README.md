@@ -6,7 +6,7 @@ Distilled from a live response to a PHP core disclosure (CVE-2026-109618 / CVE-2
 
 ## Read the guide
 
-- Web: <https://imsarah.github.io/php-vuln-response-for-agents/>
+- Web: <https://imsarah.github.io/php2shell-response-playbook/>
 - Raw markdown: [`GUIDE.md`](GUIDE.md)
 - Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
 
