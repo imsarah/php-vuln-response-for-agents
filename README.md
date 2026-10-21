@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.1-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.2-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -23,17 +23,23 @@ Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinu
 
 ## Use it in one sentence
 
-Paste this into any agent that can read a URL — Claude, Grok, ChatGPT, Cursor, your own bot:
+Paste this into an agent, fill in the two lines, send:
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and use it to fix my website. Ask me anything you cannot detect, measure the rest
-(PHP version, SAPI, docroot) instead of assuming, and ask before you change anything.
+and use it to fix my site. Run read-only commands only until I approve your plan —
+do not edit, delete or install anything before that. Measure instead of assuming;
+ask me for anything you cannot detect.
+
+My site: <WordPress / plain PHP / not sure>, on <host>
+What I want: <patch it / I think it was hacked / a warning I saw>
 ```
 
-The agent should come back with three things before it touches the site: **what it measured**, **what it plans to change**, and **what it cannot do without your host's help**. If it starts editing first, stop it — that is a Phase 0 failure, not enthusiasm.
+**Two kinds of agent, two outcomes.** With shell, SSH or panel access it can measure and change things itself. Chat-only (ChatGPT, a plain Claude window) can only give you commands to run and paste back — if it claims it checked your server, it did not.
 
-No version numbers appear above on purpose: every host differs, and copying someone else's PHP version is how sites get broken.
+**Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
+
+**Fixed revision:** replace `main` in the URL with `v1.8` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
 
 ## Start here
 
@@ -108,7 +114,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.1**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.2**.
 
 ## Licence
 

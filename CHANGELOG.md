@@ -2,6 +2,15 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.2 — 2026-10-21
+
+Review of the 1.9.1 prompt. Four changes, all in the README block:
+
+- The prompt itself now carries the constraint — **read-only until the operator approves the plan** — instead of relying on the reader to stop the agent.
+- The operator fills in two lines (site/stack/host, and what they want), so "fix my website" is no longer the whole brief.
+- Expected deliverables are named: what it measured, what it will change, **how it will back up and roll back**, and what needs the host. The undefined "Phase 0" reference is gone.
+- Two agent modes are stated plainly: shell/panel access can act; a chat-only agent can only hand over commands. And a **tag-pinned URL** (`v1.8`) is offered next to `main`, with the trade-off in one line.
+
 ## 1.9.1 — 2026-10-21
 
 - README (EN / Cantonese / Traditional Chinese) now leads with a **one-sentence prompt and no version numbers**: the operator tells the agent to read the skill, measure the environment rather than assume, ask for anything it cannot detect, and ask before changing.

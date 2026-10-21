@@ -14,17 +14,23 @@
 
 ## 一句話就用得
 
-任何讀得到網址嘅 agent（Claude、Grok、ChatGPT、Cursor、你自己個 bot）貼呢段：
+貼落 agent、填兩行、send：
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and use it to fix my website. Ask me anything you cannot detect, measure the rest
-(PHP version, SAPI, docroot) instead of assuming, and ask before you change anything.
+and use it to fix my site. Run read-only commands only until I approve your plan —
+do not edit, delete or install anything before that. Measure instead of assuming;
+ask me for anything you cannot detect.
+
+My site: <WordPress / 純 PHP / 唔確定>，喺 <邊間 host>
+我想：<patch 佢 / 懷疑俾人入侵 / 見到個警告>
 ```
 
-Agent 落手之前應該先答你三樣嘢：**量到咩**、**打算改咩**、**邊啲要你主機商才做到**。如果佢一開始就改檔，叫停 —— 呢個係 Phase 0 失敗，唔係積極。
+**兩種 agent，兩種結果。** 有 shell、SSH 或 panel 權限嘅，佢可以自己量度同落手；純聊天（ChatGPT、普通 Claude 視窗）只可以畀你指令、你貼返結果畀佢 —— 佢話「我睇過你部機」都係假嘅。
 
-上面故意冇寫任何版本號：每間 host 都唔同，照抄人哋個 PHP 版本就係整爛站嘅方法。
+**落手之前，要佢答你四樣：** 量到咩、打算改咩、點備份同點還原、邊啲要你主機商做。少一樣就係安全問題，叫停個 run。
+
+**固定版本：** 將網址裡面 `main` 換成 `v1.8`，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
 
 ## 由邊度開始
 
