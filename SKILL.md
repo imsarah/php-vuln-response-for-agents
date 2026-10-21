@@ -1,7 +1,7 @@
 ---
 name: php2shell-hardening-for-agents
 description: Use when hardening, patching or securing a PHP or WordPress site you did not build — SAPI-aware mitigation, wp-cli core/plugin/theme updates, cache-aware verification, and honest CVE patch tracking.
-version: 1.8.0
+version: 1.9.0
 license: MIT
 ---
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
