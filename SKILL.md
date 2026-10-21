@@ -14,7 +14,9 @@ metadata:
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.3 — review fixes: consistent phase numbering, an explicit authorisation gate for running third-party exploit code, source links for every version claim, a deletion carve-out, and a fourth hand-back state. Earlier: 1.2 (lab validation), 1.1 (external review), 1.0.
+Version 1.5 — adds the worked example, security policy, contributing rules, badges and a verification date; 1.3 was the review-fix revision, 1.2 lab validation, 1.1 first external review, 1.0 initial.
+
+**Install:** [INSTALL.md](INSTALL.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 

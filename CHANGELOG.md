@@ -2,6 +2,17 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.5 — 2026-10-21
+
+Third review round (marginal-gain items):
+
+- `EXAMPLE.md`: one redacted real session end to end, including the cached-404 false positive, the `.user.ini` TTL trap, the extension reset after a version switch, the plugin downgrade, and the 2x2 lab table.
+- `SECURITY.md`: how to report a wrong claim or a harmful step, with a private channel for the latter.
+- `CONTRIBUTING.md`: one change per PR, cite the source, update the CHANGELOG, review rules.
+- README badges (licence, revision, security policy, PRs welcome) and an explicit **upstream claims last verified: 2026-10-21** line.
+- `INSTALL.md` cross-linked from the top of `GUIDE.md`/`SKILL.md`.
+- `CHANGELOG.md` is now the single canonical history; the README section points to it instead of duplicating it.
+
 ## 1.4 — 2026-10-21
 
 - Renamed the repository to say what it does (`php2shell-hardening-for-agents`); the php2shell incident is now labelled as the worked example rather than the scope.

@@ -2,6 +2,11 @@
 <b>English</b> · <a href="README.yue.md">廣東話</a> · <a href="README.zh-Hant.md">繁體中文</a>
 </p>
 
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.5-informational.svg)](CHANGELOG.md)
+[![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 # PHP hardening & vulnerability response — a playbook for AI agents
 
 A step-by-step playbook for an AI agent (or a person new to PHP) that has to harden or patch PHP/WordPress sites it did not build: identify the host, measure the real PHP version and SAPI, apply the mitigation that actually works there, verify by reading the value back, then track the real patch.
@@ -9,6 +14,8 @@ A step-by-step playbook for an AI agent (or a person new to PHP) that has to har
 **It is a general PHP hardening/patching procedure.** The php2shell disclosure ([CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619); advisories [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w), [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)) is the worked example it was distilled from, not its scope: WordPress, Laravel and plain PHP are all covered, and the CVE-specific parts are labelled as such.
 
 Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a 2x2 lab run of a public PoC against patched and unpatched builds, and the patched releases 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 taken from those advisories.
+
+**Upstream claims last verified: 2026-10-21** against the advisories linked above. If today's date is much later, re-check them before repeating them.
 
 ## How to use it in 60 seconds
 
@@ -51,6 +58,7 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 - Web: <https://imsarah.github.io/php2shell-hardening-for-agents/>
 - Raw markdown: [`GUIDE.md`](GUIDE.md)
 - Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
+- Worked example (redacted real session): [EXAMPLE.md](EXAMPLE.md)
 - Chinese: [廣東話](README.yue.md) · [繁體中文](README.zh-Hant.md)
 
 ## What it covers
@@ -75,11 +83,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-- **1.4** — renamed for what it does (hardening, not just one incident); general-PHP scope stated up front; CVE record links added; Chinese READMEs added.
-- **1.3** — consistent phase numbering, explicit approval gate for running exploit code, sources for every version claim, deletion carve-outs, a fourth hand-back state, after a second external review.
-- **1.2** — lab validation against a public PoC; patched-version table; "a patch is not immunity".
-- **1.1** — first external review: authorisation gate, compromise check before backup, nginx/Docker rows, atomic writes, cache-aware verification.
-- **1.0** — initial playbook.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.5**.
 
 ## Licence
 
