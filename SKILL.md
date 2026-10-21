@@ -1,7 +1,7 @@
 ---
-name: php2shell-response-playbook
-description: Use when hardening or patching PHP sites you did not build.
-version: 1.3.0
+name: php2shell-hardening-for-agents
+description: Use when hardening or patching a PHP site you did not build — SAPI-aware mitigation, verification, and CVE patch tracking.
+version: 1.4.0
 author: Hermes Agent contributors
 license: MIT
 metadata:

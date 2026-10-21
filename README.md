@@ -2,7 +2,9 @@
 
 A step-by-step playbook for an AI agent (or a person new to PHP) that has to harden or patch PHP/WordPress sites it did not build: identify the host, measure the real PHP version and SAPI, apply the mitigation that actually works there, verify by reading the value back, then track the real patch.
 
-Distilled from a live response to a PHP core disclosure ([CVE-2026-109618](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w) / [CVE-2026-109619](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp), collectively "php2shell") across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a 2x2 lab run of a public PoC against patched and unpatched builds.
+**It is a general PHP hardening/patching procedure.** The php2shell disclosure ([CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619); advisories [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w), [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)) is the worked example it was distilled from, not its scope: WordPress, Laravel and plain PHP are all covered, and the CVE-specific parts are labelled as such.
+
+Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a 2x2 lab run of a public PoC against patched and unpatched builds, and the patched releases 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 taken from those advisories.
 
 ## Scope and safety
 
@@ -27,7 +29,7 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 
 ## Read the guide
 
-- Web: <https://imsarah.github.io/php2shell-response-playbook/>
+- Web: <https://imsarah.github.io/php2shell-hardening-for-agents/>
 - Raw markdown: [`GUIDE.md`](GUIDE.md)
 - Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
 
@@ -53,6 +55,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
+- **1.4** — renamed for what it does (hardening, not just one incident); general-PHP scope stated up front; CVE record links added.
 - **1.3** — consistent phase numbering, explicit approval gate for running exploit code, sources for every version claim, deletion carve-outs, a fourth hand-back state, after a second external review.
 - **1.2** — lab validation against a public PoC; patched-version table; "a patch is not immunity".
 - **1.1** — first external review: authorisation gate, compromise check before backup, nginx/Docker rows, atomic writes, cache-aware verification.
