@@ -12,6 +12,20 @@
 
 內容來自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 版 WordPress），包括喺拋棄式 lab 用公開 PoC 做 2×2 實測，同埋由 advisory 攞到嘅修補版本 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12。
 
+## 一句話就用得
+
+任何讀得到網址嘅 agent（Claude、Grok、ChatGPT、Cursor、你自己個 bot）貼呢段：
+
+```
+Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
+and use it to fix my website. Ask me anything you cannot detect, measure the rest
+(PHP version, SAPI, docroot) instead of assuming, and ask before you change anything.
+```
+
+Agent 落手之前應該先答你三樣嘢：**量到咩**、**打算改咩**、**邊啲要你主機商才做到**。如果佢一開始就改檔，叫停 —— 呢個係 Phase 0 失敗，唔係積極。
+
+上面故意冇寫任何版本號：每間 host 都唔同，照抄人哋個 PHP 版本就係整爛站嘅方法。
+
 ## 由邊度開始
 
 - **WordPress 站** → [WORDPRESS.md](WORDPRESS.md)：切 PHP 分支、更新 core／plugin／theme、鎖返壞咗嘅 plugin、冇 `wp-cli` 點做、一定會撞到嘅故障。

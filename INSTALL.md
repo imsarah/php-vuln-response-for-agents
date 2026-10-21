@@ -1,5 +1,7 @@
 # Installing this as a skill
 
+> **Shortest path:** the README has a [one-sentence prompt](README.md#use-it-in-one-sentence) — paste it into any agent, no install. Everything below is for installing the skill permanently.
+
 `SKILL.md` is a **self-contained** skill: YAML frontmatter plus the full procedure (Phase 0–10), the WordPress patch appendix and a redacted worked example, in one 400-line file. An agent that installs only `SKILL.md` gets everything and will not chase dead links.
 
 The other files are for humans and for agents that prefer to read one topic at a time:

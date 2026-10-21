@@ -12,6 +12,20 @@
 
 內容源自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 化的 WordPress），包含在拋棄式實驗環境中以公開 PoC 進行的 2×2 實測，以及取自上述公告的修補版本 8.2.35／8.3.36／8.4.27／8.5.12。
 
+## 一句話即可使用
+
+任何能讀取網址的 agent（Claude、Grok、ChatGPT、Cursor，或你自己的 bot）貼上這段：
+
+```
+Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
+and use it to fix my website. Ask me anything you cannot detect, measure the rest
+(PHP version, SAPI, docroot) instead of assuming, and ask before you change anything.
+```
+
+agent 動手之前應先回報三件事：**量測到什麼**、**打算改什麼**、**哪些必須由主機商處理**。若它一開始就改檔案，請叫停 —— 那是 Phase 0 的失敗，不是積極。
+
+上段刻意不寫任何版本號：每台主機都不同，抄別人的 PHP 版本正是弄壞網站的方法。
+
 ## 從這裡開始
 
 - **WordPress 網站** → [WORDPRESS.md](WORDPRESS.md)：PHP 分支切換、核心／外掛／佈景主題更新、損壞外掛的回退固定、沒有 `wp-cli` 時的做法，以及必然遇到的故障模式。

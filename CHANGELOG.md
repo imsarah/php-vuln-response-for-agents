@@ -2,6 +2,12 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.1 — 2026-10-21
+
+- README (EN / Cantonese / Traditional Chinese) now leads with a **one-sentence prompt and no version numbers**: the operator tells the agent to read the skill, measure the environment rather than assume, ask for anything it cannot detect, and ask before changing.
+- Adds the expectation the operator should hold the agent to: come back with *what it measured*, *what it will change*, and *what needs the host* — before touching the site.
+- `INSTALL.md` links to that block instead of repeating it.
+
 ## 1.9 — withdrawn 2026-10-21
 
 An attempt to put a "paste this one line" prompt at the top of the README was **reverted the same day**: the example baked in one host's PHP version and SAPI, which is wrong for every other reader and would have taught agents to copy a version instead of measuring it. Use `INSTALL.md` to install, or paste the raw `SKILL.md` URL and tell the agent to measure the environment itself.
