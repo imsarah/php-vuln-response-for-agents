@@ -24,7 +24,7 @@ Distilled from a live response to a PHP core disclosure (CVE-2026-109618 / CVE-2
 
 ## Install as a skill
 
-See [INSTALL.md](INSTALL.md) for Hermes, Claude Code and generic agents.
+See [INSTALL.md](INSTALL.md) for Hermes, Claude Code, Grok (xAI) and generic agents.
 
 ## Using it with an agent
 

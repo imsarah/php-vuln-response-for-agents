@@ -20,6 +20,19 @@ curl -fsSL https://raw.githubusercontent.com/imsarah/php-vuln-response-for-agent
 
 (Project-scoped alternative: `.claude/skills/php-vuln-response-for-agents/SKILL.md` inside the repo you are working in.)
 
+## Grok (xAI)
+
+```bash
+mkdir -p ~/.grok/skills/php-vuln-response-for-agents
+curl -fsSL https://raw.githubusercontent.com/imsarah/php-vuln-response-for-agents/main/SKILL.md   -o ~/.grok/skills/php-vuln-response-for-agents/SKILL.md
+```
+
+Grok discovers skills from `./.grok/skills/` (walked up to the repo root), `~/.grok/skills/`, `~/.agents/skills/` and any enabled plugin's `skills/` directory; user-invocable skills also appear as `/<skill-name>`. Unknown frontmatter keys are ignored, so the `version` / `license` / `metadata` keys here are harmless.
+
+Grok is fully Claude Code compatible, so the Claude Code path above works as-is with no extra setup.
+
+Project-scoped alternative: `.grok/skills/php-vuln-response-for-agents/SKILL.md` in the repo you are working in.
+
 ## Any other agent
 
 Either:
@@ -37,4 +50,5 @@ cd ~/.hermes/skills/devops/php-vuln-response-for-agents && git pull
 
 - The hard rules (back up, one change at a time, never claim unverified success)
 - A 7-phase procedure: identify → get access → measure → choose mechanism by SAPI → apply → verify → patch
+- The body assumes shell, panel or file access; an agent with no execution tools can only advise
 - A failure-mode table for the traps that actually happen (root `.php` 404s, `php_value` 500s, `mysqli` disappearing after a version switch, CDN cache hiding changes)
