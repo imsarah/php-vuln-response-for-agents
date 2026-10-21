@@ -1,7 +1,7 @@
 ---
 name: php-vuln-response-for-agents
 description: Use when hardening or patching PHP sites you did not build.
-version: 1.1.0
+version: 1.2.0
 author: Hermes Agent contributors
 license: MIT
 metadata:
@@ -9,11 +9,12 @@ metadata:
     tags: [php, wordpress, security, hardening, cpanel, litespeed, incident-response]
 ---
 
+
 # PHP vulnerability response — a playbook for AI agents
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.1 — revised after external review. Changes: authorisation gate, compromise assessment before trusting backups, safer measurement, nginx and unknown-SAPI rows, atomic writes, false-positive-resistant verification, version-vs-patch correction, WordPress-layer hardening, stop conditions.
+Version 1.2 — adds lab validation against a public PoC, the patched-versions table, and the "a patch is not immunity" correction. Earlier: 1.1 (external review), 1.0.
 
 ---
 
@@ -150,12 +151,26 @@ Give these steps in the user's language, in this order, and warn about the inter
 
 ## 10. Phase 8 — Patch, and prove you patched
 
-- The real fix is the vendor's patched release **for that branch**.
+- The real fix is the vendor's patched release **for that branch**: for `php2shell` (CVE-2026-109618 / CVE-2026-109619) that is **8.2.35, 8.3.36, 8.4.27, 8.5.12** (released 2026-10-21). A lower version on the same branch is unpatched; a higher one is fine. Every branch gets its own release on the same day — "8.2 is patched so 8.3 must be" is a false inference.
 - **A version string does not prove a patch.** Distro, CloudLinux and cPanel builds backport fixes without bumping the upstream version; Docker official images generally do bump it. Check the host's/distro's advisory or package changelog, or the panel's package version.
+- **A patch does not prove immunity.** A version bump fixes the CVE it was released for — the specific memory-safety mechanism, not every route that looks similar. Public PoCs written against the pre-patch behaviour may keep working against the patched release, because they attack a *different* chain (see Phase 7b). Report "patched for CVE-X per advisory" and keep the configuration mitigation; never report "no longer exploitable".
 - Point the user at `php.net/supported-versions.php` instead of hardcoding "8.2+".
 - An EOL branch will never be patched — the site must move to a supported branch. Say so, including "plugins may break", and require a backup plus a maintenance window.
 - **WordPress-layer hardening**, because plugins are the usual entry point: update core/plugins/themes, remove unused plugins, `DISALLOW_FILE_EDIT`, deny PHP execution in `uploads/`, audit administrators, keep a restore point.
 - Re-check after the host updates: probe again, report version and advisory.
+
+## 10b. Phase 7b — Validate against a public exploit, in a lab only
+
+When a working PoC for the CVE is public, use it to *measure your posture*, never to attack production.
+
+1. **Build the target in a disposable container.** Most PoCs ship a `Dockerfile` that reproduces the vulnerable host profile (`docker build -t lab . && docker run -d -p 127.0.0.1:18080:80 lab`). Bind to `127.0.0.1` only.
+2. **Reproduce the vulnerable case first.** If the PoC cannot pop the pre-patch build, it is not measuring anything — stop and read it before drawing conclusions.
+3. **Run the 2×2 matrix**, changing one variable at a time: `{pre-patch, patched} × {mitigation off, mitigation on}`. Record the exact command and the literal output of each cell.
+4. **Interpret honestly.** If the exploit still succeeds on the patched build with the mitigation off, the PoC is not exercising the patched path — the mitigation, not the version, is what closes it. Say that in the report instead of quoting the version number.
+5. **Never point the PoC at a live site**, even your own, even with permission: the payload runs commands, writes files and can leave the worker memory dirty. If a live check is unavoidable, confine it to a non-destructive read (`id`, `hostname`) on a staging vhost you own, and say exactly what you ran.
+6. **Delete the lab** (`docker rm -f`, `docker rmi`, remove the copied sources) and confirm nothing listens on the old port.
+
+Useful reading of a "still exploitable after patching" result: the PoC chain usually depends on an optional condition the vendor patch does not address — attacker-controllable session content, a non-default serialize handler, a gadget class with a useful `__destruct`. Enumerate those conditions against the real target. If the target lacks them, the exposure is the CVE only; if it has them, the mitigation is mandatory, not optional.
 
 ## 11. Phase 9 — Hand back
 
@@ -163,7 +178,7 @@ Report, in the user's language:
 
 1. Sites touched, and why (one line each).
 2. What was applied: mechanism, exact lines, read-back values.
-3. **Only mitigated** (hardening) vs **patched** (version + advisory source) vs **still vulnerable** (EOL branch, no patch).
+3. **Only mitigated** (hardening) vs **patched** (version + advisory source) vs **still vulnerable** (EOL branch, no patch). If a PoC was run, say which chain it exercises and which single control stopped it.
 4. Probes removed? Tokens/passwords revoked, and how?
 5. What the user must do next, numbered, with the rollback path if a step fails.
 
@@ -178,10 +193,16 @@ Report, in the user's language:
 | Change "did nothing" | CDN or page cache | Purge, retest with a random query string, hit the origin |
 | `You do not have the feature "multiphp"` | Panel feature not licensed | The user must change the version in the UI |
 | WordPress "missing the MySQL extension" | New branch has the extension disabled | Enable it **before** switching, or switch back immediately |
+| `DELE` / `RMD` return `550` | Account may write but not delete | Overwrite the probe with harmless text; ask the user to remove the file and directory |
+| `sftp://` authenticates, then `Received EOF while reading sftp packet size` | SFTP subsystem disabled on that host | Use FTPS on :21 (`curl --ssl-reqd`), never plain FTP |
 | Your `.htaccess` block vanished | Plugin or auto-update rewrote the file | Move the rule out of plugin-owned scope; re-verify by hash |
+| PoC still works on the "patched" build | The PoC attacks a different chain than the CVE (session-content injection, non-default serialize handler, gadget `__destruct`) | Keep the config mitigation on; report what the PoC depends on rather than the version |
+| Turning the mitigation off breaks an upload progress bar | The feature is rarely worth the exposure | Leave it off; if a plugin truly needs it, scope the change to that vhost and record the exception |
 
 ## Notes and limits
 
+- An account's own `php.ini` (often `/home/<user>/php.ini`, `ini` in the probe) may be **readable but not writable** (`550`) — read it to know what is actually loaded, then set the directive through `.user.ini` in the docroot instead.
 - The ini directives here were applied during the `php2shell` response (CVE-2026-109618 / CVE-2026-109619, `session.upload_progress`). **Map the directive to the CVE you are handling**, with a source link in the record — these settings do nothing for an unrelated bug.
+- PHP's own advisory for `php2shell` recommends keeping `session.upload_progress.enabled=0` **even after patching** — the feature is rarely needed and rarely tested. Treat "patched" and "mitigation removed" as two separate decisions.
 - Extension names differ by panel: CloudLinux "Select PHP Version" may list `nd_mysqli` / `nd_pdo_mysql` next to `mysqli` / `pdo_mysql`. Enable the right one and diff the extension list before and after.
 - A PHP version switch resets extensions and custom ini. Record them before, enable extensions before switching, restore limits after.
