@@ -1,13 +1,17 @@
 <p align="center">
-<b>English</b> · <a href="README.yue.md">廣東話</a> · <a href="README.zh-Hant.md">繁體中文</a>
+<b>English</b> · <a href="README.cantonese.md">Cantonese 廣東話</a> · <a href="README.zh-Hant.md">繁體中文</a>
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.6-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.7-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-# PHP hardening & vulnerability response — a playbook for AI agents
+# PHP hardening & vulnerability response — for AI agents patching PHP and WordPress sites
+
+**Most people land here because they run WordPress and need to patch it.** Start with [WORDPRESS.md](WORDPRESS.md): the PHP branch switch on a WordPress site, core/plugin/theme updates, pinning a plugin that broke on upgrade, what to do when `wp-cli` is not available, and the failure modes you will actually hit.
+
+The rest of the repo is the general PHP procedure underneath it — for Laravel, plain PHP, or when you need the full mechanism-by-SAPI detail.
 
 A step-by-step playbook for an AI agent (or a person new to PHP) that has to harden or patch PHP/WordPress sites it did not build: identify the host, measure the real PHP version and SAPI, apply the mitigation that actually works there, verify by reading the value back, then track the real patch.
 
@@ -17,25 +21,29 @@ Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinu
 
 **Upstream claims last verified: 2026-10-21** against the advisories linked above. If today's date is much later, re-check them before repeating them.
 
+## Start here
+
+- **WordPress site** → [WORDPRESS.md](WORDPRESS.md), the patch procedure; use `GUIDE.md` for the PHP branch detail.
+- **Laravel, plain PHP, or an unknown host** → [GUIDE.md](GUIDE.md), Phases 0–10.
+- **Want to see it done once, end to end** → [EXAMPLE.md](EXAMPLE.md), a redacted real session including the mistakes.
+- **Installing it as a skill** → [INSTALL.md](INSTALL.md).
+
 ## How to use it in 60 seconds
 
 1. **Install it once** — one command, see [INSTALL.md](INSTALL.md). Works in Hermes, Claude Code, Grok (xAI), or any agent that reads a markdown file.
-2. **Say the site and the problem**: "my site on cPanel runs PHP 8.3.35 and there's a PHP CVE — check it and harden it."
-3. **The agent runs the phases**: authorise → measure the real version and SAPI → confirm the docroot → check for compromise → pick the mechanism that works on that host → apply → verify by reading the value back → track the patch → report.
+2. **Say the site and the problem**: "my WordPress site on cPanel runs PHP 8.3.35 and there's a PHP CVE — check it, patch it, and update the plugins."
+3. **The agent runs the phases**: authorise → measure the real version and SAPI → confirm the docroot → check for compromise → pick the mechanism that works on that host → apply → verify by reading the value back → patch PHP and WordPress → report.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
-What it is **not**: it does not know your sites, holds no credentials and does not act on its own. It is a checklist that changes what the agent does — it stops it pasting `.htaccess` on an nginx box, trusting a cached `200`, or calling a site "patched" without the advisory.
-
-## What this is / what it is not
-
-- **Is:** a general PHP hardening and patch-tracking procedure, mechanism-based (LiteSpeed, mod_php, PHP-FPM, nginx, Docker, unknown SAPI).
-- **Is not:** an exploit kit, a WordPress maintenance guide, or a scanner. Nothing here runs against a live site unattended.
-- **Needs:** an agent with shell, panel or file access. A chat-only bot can advise, and should say it cannot verify.
+It does not know your sites, holds no credentials and does not act on its own. What it changes is what the agent does: no `.htaccess` pasted onto an nginx box, no trusting a cached `200`, no calling a site "patched" without the advisory.
 
 ## Scope and safety
 
 This is a procedure for an authorised operator, not an autonomous exploit kit.
 
+- **Is:** a general PHP hardening and patch-tracking procedure, mechanism-based (LiteSpeed, mod_php, PHP-FPM, nginx, Docker, unknown SAPI), with a dedicated WordPress patch path in [WORDPRESS.md](WORDPRESS.md).
+- **Is not:** an exploit kit, a scanner, or a substitute for reading a plugin's changelog. Nothing here runs against a live site unattended.
+- **Needs:** an agent with shell, panel or file access. A chat-only bot can advise, and should say it cannot verify.
 - It assumes the user owns or is authorised for every domain named, and that the agent confirms that before touching anything.
 - It never runs exploit code against a live site; PoC validation happens only in a disposable container, after its source has been read and the user has approved that specific action.
 - It stops and hands back on compromise indicators, PCI-scope payment sites, unverifiable changes, and anything the user has not approved.
@@ -43,27 +51,29 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 
 ## Tested on / not tested
 
-**Validated:** LiteSpeed shared hosting with CloudLinux alt-php (per-directory `.htaccess`), cPanel UAPI/Fileman, PHP-FPM behind Apache (`.user.ini`, 300 s TTL), Docker official `php`/`wordpress` images (`conf.d`), and a throwaway lab reproducing a public PoC.
+**Validated:** LiteSpeed shared hosting with CloudLinux alt-php (per-directory `.htaccess`), cPanel UAPI/Fileman, PHP-FPM behind Apache (`.user.ini`, 300 s TTL), Docker official `php`/`wordpress` images (`conf.d`), WordPress core/plugin updates with `wp-cli`, and a throwaway lab reproducing a public PoC.
 
-**Not tested:** nginx without pool access, FrankenPHP, Windows/IIS, panels other than cPanel and the two custom SureServer-style panels this came from. The guide says how to behave there; it does not claim those paths were exercised.
+**Not tested:** nginx without pool access, FrankenPHP, Windows/IIS, WordPress multisite, hosts without `wp-cli` (the dashboard route in WORDPRESS.md is written from the interface, not from a live run), and panels other than cPanel and the two custom SureServer-style panels this came from. The guide says how to behave there; it does not claim those paths were exercised.
 
 ## Known limitations
 
 - Version numbers and advisory links are only as current as the last edit; verify them against the upstream advisory before repeating them (Phase 9 says how).
 - `session.use_strict_mode=1` is deliberately advised against on commerce sites — the mitigation set here is the conservative one, not the strongest possible one.
 - A "patched" verdict means the vendor advisory covers the branch; it is not a guarantee against unrelated chains.
+- Plugin compatibility is inferred, not known: the guide tells you how to test it on a staging copy, not which plugins on your site are safe.
 
 ## Read the guide
 
 - Web: <https://imsarah.github.io/php2shell-hardening-for-agents/>
-- Raw markdown: [`GUIDE.md`](GUIDE.md)
-- Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
-- Worked example (redacted real session): [EXAMPLE.md](EXAMPLE.md)
 - WordPress patch procedure: [WORDPRESS.md](WORDPRESS.md)
-- Chinese: [廣東話](README.yue.md) · [繁體中文](README.zh-Hant.md)
+- General PHP procedure: [`GUIDE.md`](GUIDE.md)
+- Worked example (redacted real session): [EXAMPLE.md](EXAMPLE.md)
+- Skill form (YAML front matter): [`SKILL.md`](SKILL.md)
+- Chinese: [Cantonese 廣東話](README.cantonese.md) · [繁體中文](README.zh-Hant.md)
 
 ## What it covers
 
+- A WordPress patch procedure: pre-flight, staging with a database prefix, core/plugin/theme updates, `wp-cli` and the no-`wp-cli` fallback, plugin dependency groups, license-gated updates that will not download, hardening, and a WordPress failure table
 - An authorisation gate, so an agent does not widen scope on its own — including a separate approval for running third-party exploit code
 - Measuring exposure with the least intrusive method available
 - Confirming the docroot before editing anything
@@ -72,7 +82,6 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 - Writing config safely, and verifying without fooling yourself (cache, TTL, body hashes)
 - Telling mitigation apart from a real patch, including backported vendor builds
 - Validating a claim against a public PoC **in a throwaway lab**, and reading the result honestly (a patch is not immunity)
-- A dedicated WordPress procedure ([WORDPRESS.md](WORDPRESS.md)): pre-flight, patching core/plugins/themes, pinning a broken plugin back, hardening, and the failure modes
 - A failure-mode table that maps symptoms to what they actually mean
 
 ## Install as a skill
@@ -85,7 +94,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.6**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.7**.
 
 ## Licence
 

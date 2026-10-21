@@ -23,6 +23,19 @@ wp db size --tables --human          # Before you dump
 - **Staging is not optional for plugin updates.** Clone docroot (rsync) and import the dump. If the account cannot create a database, import into the *same* database under a prefix (`stg_`) and point the staging `wp-config.php` at it, then set `siteurl`/`home` to the staging hostname. Undo it afterwards by dropping the prefixed tables.
 - Check the PHP branch against the plugins **before** switching: `wp plugin list` plus the plugin's "requires PHP" header. A plugin that declares `Requires PHP: 7.4` may still break on 8.3.
 
+## 0b. When there is no wp-cli (shared hosting, no SSH)
+
+Plenty of WordPress sites cannot run `wp` at all. The procedure survives without it, but you lose the dry run and the precise rollback — so compensate with the stash and the staging copy.
+
+- **Backup from the panel first**: files (or at least `wp-content`) *and* the database export. A dashboard update cannot be undone by the host.
+- **Stash a copy of the plugin folder and its version** before updating it (`wp-content/plugins/<slug>` → download via File Manager). This is your rollback: re-upload the old folder, or use **Plugins → Add New → Upload Plugin** with the previous zip.
+- **Update one group at a time**, starting with the plugins nobody can live without (security, commerce, forms). Refresh the dashboard between batches and look for the "Briefly unavailable for scheduled maintenance" screen or a leftover `wp-content/.maintenance` file — delete it once the batch finished.
+- **Core update** the same way: Dashboard → Updates, or the panel's WordPress installer if it bundles one. Never update core and a page builder in the same sitting.
+- **No dry run means staging is the dry run.** Use the prefixed-copy trick in §0, run the dashboard updates there first, then repeat on production.
+- If a batch dies mid-way, **do not immediately retry the whole batch**: refresh, note which plugin's row still shows an update, and do that one alone.
+
+*This section is written from the WordPress interface, not from a live run on a host without `wp-cli`; treat the timings as guidance and the backups as mandatory.*
+
 ## 1. Patch PHP for a WordPress site
 
 The mechanics live in the main guide (Phase 5–9). WordPress-specific traps:
@@ -52,6 +65,8 @@ wp core update && wp core update-db
 
   Production then ran `--exclude=<slug>` so the breakage could never land.
 - **Pin what breaks, and write down why** (plugin, version, symptom, date) so the next person does not "just update everything".
+- **Update in dependency groups, not alphabetically.** Page builders ship an addon pack, WooCommerce ships gateway extensions, and some plugins declare nothing while still requiring a companion. Updating one half and not the other is a common way to break a site that "only had two updates". Update the pair in the same batch, or neither.
+- **When an update will not download**, that is a different failure from a broken update. Premium plugins and themes check a licence against a vendor server: a lapsed licence, a migrated site or a dead endpoint shows as `401`/`403`/timeout in the update log, while the dashboard just says "update failed". Renew or re-attach the licence, or upload the new zip manually — do not force-reinstall from the old server, and do not assume the plugin is current because it says so.
 - **Inactive plugins are still attack surface.** Delete unused ones (`wp plugin delete <slug>`), which also removes their update burden.
 - **Auto-updates:** enabling them for minor/core security releases is usually right; do not enable them for plugins you have not tested.
 
@@ -87,6 +102,11 @@ wp config set DISALLOW_FILE_MODS false --raw      # keep installs working; true 
 | Front end fine, admin blank/500 | `memory_limit` too low after the switch | Restore the previous limit (256M is a sane floor for page builders) |
 | `.htaccess` block vanished | LiteSpeed Cache / Wordfence / permalink save rewrote it | Move the rule out of plugin-owned scope; re-verify by hash |
 | 200 everywhere but the page content is old | Page cache or object cache | Purge plugin + server cache, re-request with a cache-busting query string |
+| Update available, download fails (`401`/`403`/timeout) | Licence lapsed or the vendor's update server is gone | Renew/re-attach the licence, or upload the zip manually; never force-reinstall from the old server |
+| Stale options or missing tables after an update, HTTP cache already purged | Redis/Memcached object cache still holding serialized data from the old version | Flush the object cache too (`wp cache flush`, or the panel's cache tool) — a different layer from page cache |
+| Two plugins break when updated separately | They ship together (builder + addon, commerce + gateway) | Update the pair in one batch, or roll both back together |
+
+**Multisite:** out of scope for this document. Network-activated plugins update from the Network Admin and apply to every site; a single-site rollback does not undo a network-wide one. Get explicit approval before touching a network, and take a full database dump first.
 
 ## 5. What "done" looks like
 

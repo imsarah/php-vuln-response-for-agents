@@ -1,8 +1,10 @@
 <p align="center">
-<a href="README.md">English</a> · <a href="README.yue.md">廣東話</a> · <b>繁體中文</b>
+<a href="README.md">English</a> · <a href="README.cantonese.md">Cantonese 廣東話</a> · <b>繁體中文</b>
 </p>
 
 # PHP 加固與漏洞應變 —— 給 AI Agent 的實戰 Playbook
+
+**多數人來到這裡，是因為他們運行 WordPress、需要修補它。** 請從 [WORDPRESS.md](WORDPRESS.md) 開始：WordPress 網站的 PHP 分支切換、核心／外掛／佈景主題更新、升級後損壞的外掛如何回退固定版本、沒有 `wp-cli` 時怎麼做，以及必然會遇到的故障模式。
 
 這是一份**步驟清單**，供 AI agent（或不熟悉 PHP 的使用者）處理**並非自己建置的 PHP／WordPress 網站**：辨識主機、量測實際的 PHP 版本與 SAPI、套用該環境真正有效的緩解措施、讀回設定值以驗證，最後追蹤真正的修補版本。
 
@@ -48,7 +50,8 @@
 - 網頁版：<https://imsarah.github.io/php2shell-hardening-for-agents/>
 - 純 markdown：[`GUIDE.md`](GUIDE.md)
 - Skill 格式（含 YAML frontmatter）：[`SKILL.md`](SKILL.md)
-- 其他語言：[English](README.md) · [廣東話](README.yue.md)
+- WordPress 修補流程：[WORDPRESS.md](WORDPRESS.md)
+- 其他語言：[English](README.md) · [Cantonese 廣東話](README.cantonese.md)
 
 ## 授權
 

@@ -1,7 +1,7 @@
 ---
 name: php2shell-hardening-for-agents
 description: Use when hardening or patching a PHP site you did not build — SAPI-aware mitigation, verification, and CVE patch tracking.
-version: 1.6.0
+version: 1.7.0
 author: Hermes Agent contributors
 license: MIT
 metadata:
@@ -14,7 +14,7 @@ metadata:
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.6 — adds WORDPRESS.md (the WordPress patch procedure). Earlier: 1.5 worked example/security policy, 1.3 review fixes, 1.2 lab validation, 1.1 first review, 1.0 initial.
+Version 1.7 — README now leads with WordPress; WORDPRESS.md gains the no-wp-cli route, dependency groups, licence-gated updates, object-cache staleness and a multisite scope note. Earlier: 1.6 WordPress procedure, 1.5 worked example, 1.3 review fixes, 1.2 lab validation, 1.1 first review, 1.0 initial.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 

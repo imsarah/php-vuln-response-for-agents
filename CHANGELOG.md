@@ -2,6 +2,16 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.7 — 2026-10-21
+
+Fourth review round, plus a language rename.
+
+- README now opens WordPress-first: most arrivals run WordPress, so the repo says so in line one, adds a **Start here** router, and demotes the general-PHP framing to the paragraph underneath.
+- Removed the duplicated "what it is / is not" prose; the boundary bullets now live inside **Scope and safety**, and "not a WordPress maintenance guide" is corrected to a positive pointer at `WORDPRESS.md`.
+- H1 names both PHP and WordPress, so the title does not require inferring scope from a CVE-named repo.
+- `WORDPRESS.md` gained: the **no-`wp-cli` route** (dashboard, stashed plugin folder as rollback, one group at a time, marked as interface-written not live-tested), **dependency groups**, **licence-gated updates that will not download**, **object-cache staleness after a version bump**, and a **multisite out-of-scope** note — with three new failure-table rows.
+- Cantonese README renamed `README.yue.md` → **`README.cantonese.md`** (and labelled "Cantonese 廣東話"); both Chinese READMEs gained the WordPress-first opening line and the WordPress link.
+
 ## 1.6 — 2026-10-21
 
 - `WORDPRESS.md`: the WordPress half of the procedure, kept separate because it is a different job from patching the PHP branch — pre-flight checks, staging via a database prefix, `wp-cli` update/rollback commands, pinning a plugin whose major version breaks a theme, site hardening, and a WordPress-specific failure table.
