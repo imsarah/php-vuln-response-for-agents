@@ -1,7 +1,7 @@
 ---
 name: php2shell-hardening-for-agents
 description: Use when hardening or patching a PHP site you did not build — SAPI-aware mitigation, verification, and CVE patch tracking.
-version: 1.4.0
+version: 1.5.0
 author: Hermes Agent contributors
 license: MIT
 metadata:
