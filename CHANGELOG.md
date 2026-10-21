@@ -2,9 +2,9 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
-## 1.9 — 2026-10-21
+## 1.9 — withdrawn 2026-10-21
 
-- **No-install path first.** The README (all three languages) and `INSTALL.md` now open with the one-line prompt: paste the raw `SKILL.md` URL into any agent that can fetch a URL, plus the fallback for agents that cannot, and the one-command install for Claude Code / Grok / Hermes. Motivated by the obvious question "how do I actually use this?" having no answer above the fold.
+An attempt to put a "paste this one line" prompt at the top of the README was **reverted the same day**: the example baked in one host's PHP version and SAPI, which is wrong for every other reader and would have taught agents to copy a version instead of measuring it. Use `INSTALL.md` to install, or paste the raw `SKILL.md` URL and tell the agent to measure the environment itself.
 
 ## 1.8 — 2026-10-21
 

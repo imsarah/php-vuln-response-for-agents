@@ -12,24 +12,6 @@
 
 內容源自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 化的 WordPress），包含在拋棄式實驗環境中以公開 PoC 進行的 2×2 實測，以及取自上述公告的修補版本 8.2.35／8.3.36／8.4.27／8.5.12。
 
-## 一行搞定，無需安裝
-
-任何**能連上網路**的 agent（Claude、Grok、ChatGPT、Cursor，或你自己的 bot）貼上這段即可：
-
-```
-Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and follow it for my site. Measure the PHP version and SAPI yourself — do not
-assume any version I mention. Ask me for permission before changing anything.
-
-My site: <WordPress／Laravel／原生 PHP —— 我不知道主機與版本>
-我擔心的是：<這個 CVE、更新失敗、看到的警告>
-```
-
-該檔案自我完整 —— 十個階段、WordPress 完整流程與一個實例，全在其中。無需安裝、無需帳號。**請勿照抄本 README 的版本號**：每台主機不同，agent 第一步就是自行量測。
-
-- **Agent 無法抓取網址？** 開啟連結、全選、貼為第一則訊息。
-- **使用 Claude Code／Grok／Hermes？** 一行指令安裝一次，見 [INSTALL.md](INSTALL.md)。
-
 ## 從這裡開始
 
 - **WordPress 網站** → [WORDPRESS.md](WORDPRESS.md)：PHP 分支切換、核心／外掛／佈景主題更新、損壞外掛的回退固定、沒有 `wp-cli` 時的做法，以及必然遇到的故障模式。

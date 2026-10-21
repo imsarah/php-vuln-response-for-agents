@@ -1,15 +1,5 @@
 # Installing this as a skill
 
-> **Fastest path — no install at all.** Paste this into any agent that can fetch a URL:
->
-> ```
-> Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-> and follow it for my site. Measure the PHP version and SAPI yourself — do not assume.
-> Ask me for permission before changing anything.
-> ```
->
-> Everything below is for people who want the skill installed permanently.
-
 `SKILL.md` is a **self-contained** skill: YAML frontmatter plus the full procedure (Phase 0–10), the WordPress patch appendix and a redacted worked example, in one 400-line file. An agent that installs only `SKILL.md` gets everything and will not chase dead links.
 
 The other files are for humans and for agents that prefer to read one topic at a time:
