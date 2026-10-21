@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.8-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -20,6 +20,22 @@ A step-by-step playbook for an AI agent (or a person new to PHP) that has to har
 Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a 2x2 lab run of a public PoC against patched and unpatched builds, and the patched releases 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 taken from those advisories.
 
 **Upstream claims last verified: 2026-10-21** against the advisories linked above. If today's date is much later, re-check them before repeating them.
+
+## Use it in one line (no install)
+
+Paste this into any agent that can fetch a URL — Claude, Grok, ChatGPT, Cursor, or your own bot:
+
+```
+Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
+and follow it for my site. Ask me for permission before changing anything.
+
+My situation: WordPress on shared hosting (cPanel), PHP 8.3.35, LiteSpeed.
+```
+
+That file is self-contained — the 10 phases, the WordPress procedure and a worked example in one place. Nothing to install, no account, no package.
+
+- **Agent cannot fetch URLs?** Open the link, select all, paste it as the first message.
+- **Using Claude Code, Grok or Hermes?** Install once with one command — see [INSTALL.md](INSTALL.md).
 
 ## Start here
 
@@ -94,7 +110,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.8**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9**.
 
 ## Licence
 

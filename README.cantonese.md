@@ -12,6 +12,22 @@
 
 內容來自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 版 WordPress），包括喺拋棄式 lab 用公開 PoC 做 2×2 實測，同埋由 advisory 攞到嘅修補版本 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12。
 
+## 一行搞定，唔使裝
+
+任何**上得到網**嘅 agent（Claude、Grok、ChatGPT、Cursor、你自己個 bot）貼呢段就得：
+
+```
+Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
+and follow it for my site. Ask me for permission before changing anything.
+
+My situation: WordPress on shared hosting (cPanel), PHP 8.3.35, LiteSpeed.
+```
+
+嗰個檔係自我完整嘅 —— 10 個 Phase、WordPress 全流程、一個實例，全部喺裡面。唔使裝、唔使開帳戶。
+
+- **Agent 拉唔到網址？** 開條 link、全選、貼做第一句。
+- **用 Claude Code／Grok／Hermes？** 一行指令裝一次，見 [INSTALL.md](INSTALL.md)。
+
 ## 由邊度開始
 
 - **WordPress 站** → [WORDPRESS.md](WORDPRESS.md)：切 PHP 分支、更新 core／plugin／theme、鎖返壞咗嘅 plugin、冇 `wp-cli` 點做、一定會撞到嘅故障。

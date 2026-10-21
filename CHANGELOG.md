@@ -2,6 +2,10 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9 — 2026-10-21
+
+- **No-install path first.** The README (all three languages) and `INSTALL.md` now open with the one-line prompt: paste the raw `SKILL.md` URL into any agent that can fetch a URL, plus the fallback for agents that cannot, and the one-command install for Claude Code / Grok / Hermes. Motivated by the obvious question "how do I actually use this?" having no answer above the fold.
+
 ## 1.8 — 2026-10-21
 
 Fifth review round — packaging and safety:

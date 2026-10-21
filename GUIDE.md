@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.8 — the skill is now self-contained (GUIDE + WordPress appendix + worked example in one file, rebuilt by scripts/build_skill.py). Earlier: 1.7 WordPress-first README, 1.6 WordPress procedure, 1.5 worked example, 1.3 review fixes, 1.2 lab validation, 1.1 first review, 1.0 initial.
+Version 1.9 — README and INSTALL lead with the no-install one-liner (paste a URL into any agent). Earlier: 1.8 self-contained skill, 1.7 WordPress-first README, 1.6 WordPress procedure, 1.5 worked example, 1.3 review fixes, 1.2 lab validation, 1.1 first review, 1.0 initial.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
