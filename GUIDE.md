@@ -167,10 +167,13 @@ Report, in the user's language:
 | Change "did nothing" | CDN or page cache | Purge, retest with a random query string, hit the origin |
 | `You do not have the feature "multiphp"` | Panel feature not licensed | The user must change the version in the UI |
 | WordPress "missing the MySQL extension" | New branch has the extension disabled | Enable it **before** switching, or switch back immediately |
+| `DELE` / `RMD` return `550` | Account may write but not delete | Overwrite the probe with harmless text; ask the user to remove the file and directory |
+| `sftp://` authenticates, then `Received EOF while reading sftp packet size` | SFTP subsystem disabled on that host | Use FTPS on :21 (`curl --ssl-reqd`), never plain FTP |
 | Your `.htaccess` block vanished | Plugin or auto-update rewrote the file | Move the rule out of plugin-owned scope; re-verify by hash |
 
 ## Notes and limits
 
+- An account's own `php.ini` (often `/home/<user>/php.ini`, `ini` in the probe) may be **readable but not writable** (`550`) — read it to know what is actually loaded, then set the directive through `.user.ini` in the docroot instead.
 - The ini directives here were applied during the `php2shell` response (CVE-2026-109618 / CVE-2026-109619, `session.upload_progress`). **Map the directive to the CVE you are handling**, with a source link in the record — these settings do nothing for an unrelated bug.
 - Extension names differ by panel: CloudLinux "Select PHP Version" may list `nd_mysqli` / `nd_pdo_mysql` next to `mysqli` / `pdo_mysql`. Enable the right one and diff the extension list before and after.
 - A PHP version switch resets extensions and custom ini. Record them before, enable extensions before switching, restore limits after.
