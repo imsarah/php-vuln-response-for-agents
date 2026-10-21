@@ -4,7 +4,8 @@
 >
 > ```
 > Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-> and follow it for my site. Ask me for permission before changing anything.
+> and follow it for my site. Measure the PHP version and SAPI yourself — do not assume.
+> Ask me for permission before changing anything.
 > ```
 >
 > Everything below is for people who want the skill installed permanently.

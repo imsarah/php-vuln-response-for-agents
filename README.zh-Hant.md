@@ -18,12 +18,14 @@
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and follow it for my site. Ask me for permission before changing anything.
+and follow it for my site. Measure the PHP version and SAPI yourself — do not
+assume any version I mention. Ask me for permission before changing anything.
 
-My situation: WordPress on shared hosting (cPanel), PHP 8.3.35, LiteSpeed.
+My site: <WordPress／Laravel／原生 PHP —— 我不知道主機與版本>
+我擔心的是：<這個 CVE、更新失敗、看到的警告>
 ```
 
-該檔案自我完整 —— 十個階段、WordPress 完整流程與一個實例，全在其中。無需安裝、無需帳號。
+該檔案自我完整 —— 十個階段、WordPress 完整流程與一個實例，全在其中。無需安裝、無需帳號。**請勿照抄本 README 的版本號**：每台主機不同，agent 第一步就是自行量測。
 
 - **Agent 無法抓取網址？** 開啟連結、全選、貼為第一則訊息。
 - **使用 Claude Code／Grok／Hermes？** 一行指令安裝一次，見 [INSTALL.md](INSTALL.md)。
@@ -38,7 +40,7 @@ My situation: WordPress on shared hosting (cPanel), PHP 8.3.35, LiteSpeed.
 ## 60 秒上手
 
 1. **安裝一次** —— 單一指令，見 [INSTALL.md](INSTALL.md)。適用於 Hermes、Claude Code、Grok（xAI），或任何能讀取 markdown 的 agent。
-2. **說明網站與問題**：例如「我的 cPanel 網站執行 PHP 8.3.35，有一個 PHP CVE，請檢查並加固」。
+2. **說明網站與問題**：例如「我的 WordPress 網站有一個 PHP CVE，請檢查並修補，順便告訴我實際的版本與 SAPI」。
 3. **由 agent 執行各階段**：授權 → 量測實際版本與 SAPI → 確認 docroot → 檢查是否已被入侵 → 選擇該主機適用的機制 → 套用 → 讀回數值驗證 → 追蹤修補 → 交付報告。
 4. **閱讀最後的報告**：每個網站屬於四種狀態之一 —— 僅緩解、已修補、已修補但保留緩解、仍存在漏洞 —— 以及接下來必須由您完成的事項。
 

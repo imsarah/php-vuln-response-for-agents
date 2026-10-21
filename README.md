@@ -27,12 +27,14 @@ Paste this into any agent that can fetch a URL — Claude, Grok, ChatGPT, Cursor
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and follow it for my site. Ask me for permission before changing anything.
+and follow it for my site. Measure the PHP version and SAPI yourself — do not
+assume any version I mention. Ask me for permission before changing anything.
 
-My situation: WordPress on shared hosting (cPanel), PHP 8.3.35, LiteSpeed.
+My site: <WordPress / Laravel / plain PHP — I don't know which host or version>
+What worries me: <the CVE, a failed update, a warning I saw>
 ```
 
-That file is self-contained — the 10 phases, the WordPress procedure and a worked example in one place. Nothing to install, no account, no package.
+That file is self-contained — the 10 phases, the WordPress procedure and a worked example in one place. Nothing to install, no account, no package. **Do not copy a version number from this README**: every PHP version and path differs per host, and the first phase tells the agent to measure it.
 
 - **Agent cannot fetch URLs?** Open the link, select all, paste it as the first message.
 - **Using Claude Code, Grok or Hermes?** Install once with one command — see [INSTALL.md](INSTALL.md).
@@ -47,7 +49,7 @@ That file is self-contained — the 10 phases, the WordPress procedure and a wor
 ## How to use it in 60 seconds
 
 1. **Install it once** — one command, see [INSTALL.md](INSTALL.md). Works in Hermes, Claude Code, Grok (xAI), or any agent that reads a markdown file.
-2. **Say the site and the problem**: "my WordPress site on cPanel runs PHP 8.3.35 and there's a PHP CVE — check it, patch it, and update the plugins."
+2. **Say the site and the problem**: "my WordPress site has a PHP CVE — check it, patch it, update the plugins, and tell me what version and SAPI you actually find."
 3. **The agent runs the phases**: authorise → measure the real version and SAPI → confirm the docroot → check for compromise → pick the mechanism that works on that host → apply → verify by reading the value back → patch PHP and WordPress → report.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
