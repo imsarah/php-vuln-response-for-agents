@@ -39,7 +39,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 **Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
 
-**Fixed revision:** replace `main` in the URL with `v1.8` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
+**Fixed revision:** replace `main` in the URL with `v1.9.5` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
 
 ## Start here
 
