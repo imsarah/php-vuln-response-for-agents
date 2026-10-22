@@ -43,8 +43,8 @@ Plenty of WordPress sites cannot run `wp` at all — including the **official `w
 
 The mechanics live in the main guide (Phase 5–9). WordPress-specific traps:
 
-- **Extensions vanish on a version switch.** A missing `mysqli` shows as *"Your PHP installation appears to be missing the MySQL extension which is required by WordPress."* Enable `mysqli` (or `nd_mysqli` on CloudLinux) **before** the switch, not after.
-- **`memory_limit` and upload limits reset.** Elementor, page builders and imports fail at 128M; record the old values and restore them.
+- **Extensions vanish on a version switch.** A missing `mysqli` shows as *"Your PHP installation appears to be missing the MySQL extension which is required by WordPress."* Enable `mysqli` (or `nd_mysqli` on CloudLinux) **before** the switch, not after, and confirm it is listed as loaded for the new branch.
+- **`memory_limit` and upload limits reset.** Elementor, page builders and imports fail at 128M; record the old values and restore them, then read the effective values back as the web server sees them (the CLI often loads a different `php.ini`).
 - **Pending DB upgrades surface in wp-admin**, not on the front end: Elementor, LearnPress, WooCommerce. `wp core update-db` does core; plugin upgrades usually happen on the next admin visit — sign in once and complete them, or the site limps.
 - **Purge every cache layer** after the switch: plugin cache, LiteSpeed/`x-litespeed-cache`, SureCache, Cloudflare. A stale `HIT` hides both fixes and breakage.
 - **Verify by text, not by status**: compare rendered text against staging (`difflib`/`diff <(curl … ) <(curl …)`), check `wp-login.php` renders, check one form's AJAX endpoint answers, and confirm no `Warning:`/`Fatal error` in the HTML of any page.
@@ -71,7 +71,7 @@ wp core update && wp core update-db
 - **Update in dependency groups, not alphabetically.** Page builders ship an addon pack, WooCommerce ships gateway extensions, and some plugins declare nothing while still requiring a companion. Updating one half and not the other is a common way to break a site that "only had two updates". Update the pair in the same batch, or neither.
 - **When an update will not download**, that is a different failure from a broken update. Premium plugins and themes check a licence against a vendor server: a lapsed licence, a migrated site or a dead endpoint shows as `401`/`403`/timeout in the update log, while the dashboard just says "update failed". Renew or re-attach the licence, or upload the new zip manually — do not force-reinstall from the old server, and do not assume the plugin is current because it says so.
 - **Inactive plugins are still attack surface.** Delete unused ones (`wp plugin delete <slug>`), which also removes their update burden.
-- **Auto-updates:** enabling them for minor/core security releases is usually right; do not enable them for plugins you have not tested.
+- **Auto-updates:** enabling them for minor/core security releases is usually right; do not enable them for plugins you have not tested. Read the setting back afterwards (`wp plugin auto-updates status --all`).
 
 ## 2b. Gates before anything destructive
 
@@ -93,17 +93,17 @@ wp config set DISALLOW_FILE_EDIT true --raw       # No plugin/theme editor in wp
 wp config set DISALLOW_FILE_MODS false --raw      # keep installs working; true locks them
 ```
 
-- **No PHP in `uploads/`.** If the host allows a `.htaccess`:
+Read both back with `wp config get DISALLOW_FILE_EDIT` / `wp config get DISALLOW_FILE_MODS` — a mistyped name is added silently and does nothing.
+
+- **No PHP in `uploads/`.** If the host allows a `.htaccess`, put this in `wp-content/uploads/.htaccess`:
   ```apache
-  <Directory "…/wp-content/uploads">
-    <FilesMatch "\.php$">
-      Require all denied
-    </FilesMatch>
-  </Directory>
+  <FilesMatch "(?i)\.(php[0-9]?|phtml|phar)$">
+    Require all denied
+  </FilesMatch>
   ```
-  On nginx this is a server config change — ask the host rather than shipping a `.htaccess` that does nothing (Phase 5 of the main guide).
+  On nginx this is a server config change — ask the host rather than shipping a `.htaccess` that does nothing (Phase 5 of the main guide); either way, verify by fetching a harmless test `.php` placed in `uploads/` (expect 403/404, then delete it) rather than assuming the rule applies.
 - **Audit administrators**, remove dormant ones, rotate their passwords; add 2FA (a plugin is acceptable).
-- **XML-RPC**: block only if you have confirmed nothing uses it (some apps and Jetpack do).
+- **XML-RPC**: block only if you have confirmed nothing uses it (some apps and Jetpack do). If you block it, request `/xmlrpc.php` afterwards and confirm it is refused.
 - **After any suspected compromise**: rotate DB credentials, all salts (`wp config shuffle-salts`), admin passwords and hosting-panel credentials, then re-run the compromise check in Phase 4.
 - **Keep the WordPress `.htaccess` block intact** (`# BEGIN WordPress … # END WordPress`). Add your rules outside it, or the next permalink save wipes them.
 
@@ -115,7 +115,7 @@ wp config set DISALLOW_FILE_MODS false --raw      # keep installs working; true 
 | Every page, including `wp-login.php`, shows a warning | A plugin/theme major update removed a file another one requires | `wp plugin list`, then pin the offender back to its last working version |
 | *"Briefly unavailable for scheduled maintenance"* | A core/plugin update left `.maintenance` behind | Delete `wp-content/.maintenance` once the update is finished |
 | Admin requires a database update and the front end looks broken | Elementor/LearnPress/WooCommerce DB migration pending | Sign in to wp-admin once, run the upgrade, then purge caches |
-| Front end fine, admin blank/500 | `memory_limit` too low after the switch | Restore the previous limit (256M is a sane floor for page builders) |
+| Front end fine, admin blank/500 | `memory_limit` too low after the switch | Restore the previous limit (256M is a sane floor for page builders) and read the effective value back |
 | `.htaccess` block vanished | LiteSpeed Cache / Wordfence / permalink save rewrote it | Move the rule out of plugin-owned scope; re-verify by hash |
 | 200 everywhere but the page content is old | Page cache or object cache | Purge plugin + server cache, re-request with a cache-busting query string |
 | Update available, download fails (`401`/`403`/timeout) | Licence lapsed or the vendor's update server is gone | Renew/re-attach the licence, or upload the zip manually; never force-reinstall from the old server |
