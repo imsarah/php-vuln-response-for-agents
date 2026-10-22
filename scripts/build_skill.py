@@ -11,6 +11,10 @@ import re, pathlib, sys
 
 root = pathlib.Path(__file__).resolve().parent.parent
 fm = (root / "skill.yaml").read_text().strip()
+# FRONTMATTER CHECK: an empty or stripped skill.yaml silently produces a skill
+# with no name/description, so the agent can never load it. Fail loudly instead.
+if not fm.startswith("---") or "name:" not in fm or "description:" not in fm:
+    raise SystemExit(f"skill.yaml is invalid or empty ({len(fm)} chars) — refusing to build")
 
 def body_of(name):
     text = (root / name).read_text()

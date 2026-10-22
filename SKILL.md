@@ -1,4 +1,9 @@
-
+---
+name: php2shell-hardening-for-agents
+description: Use when hardening, patching or securing a PHP or WordPress site you did not build — SAPI-aware mitigation, wp-cli core/plugin/theme updates, cache-aware verification, and honest CVE patch tracking.
+version: 1.9.4
+license: MIT
+---
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
 Version 1.9.4 — 2026-10-22. Read-only vs measurement probes resolved (a probe is a write: ask first), Appendix A/B naming so a single-file reader is never hunting for a missing document, and the patch-versus-mitigation distinction stated in one line. Earlier: 1.9.3 reviewer wording, 1.9.2 prompt hardening, 1.9.1 version-free prompt, 1.9 withdrawn, 1.8 self-contained skill, 1.7 WordPress-first.
