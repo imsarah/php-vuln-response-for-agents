@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.8 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
+Version 1.9.9 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -40,7 +40,7 @@ Version 1.9.8 — 2026-10-22. This document is the procedure; CHANGELOG.md holds
 
 Ordered from safest to riskiest. Use the first one available.
 
-1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-public path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`), so it never leaves the box.
+1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-public path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`), so it never leaves the box. **Check that something is actually listening first** (`ss -ltnp` or `curl -sI http://127.0.0.1/`): on a box with no local web server that read returns nothing, which is not the same as "the probe failed".
 2. **Panel API:** some panels expose the per-domain PHP version and handler. Use it if present.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
@@ -70,13 +70,13 @@ echo json_encode([
 
 - **Baseline first:** status code *and* body hash — `curl -s https://DOMAIN/ | sha256sum` — so a later cached or defaced 200 is not mistaken for success.
 - `dig +short DOMAIN NS A`; `curl -sI https://DOMAIN/`; record `server:`, cache headers (`cf-ray`, `x-litespeed-cache`, `surecache-status`). Cloudflare is not the only CDN (QUIC.cloud, Sucuri, Fastly).
-- **Confirm which directory serves the domain**: upload a harmless `.html` marker to the docroot you believe is correct and fetch it. A 404 for your probe usually means **wrong docroot** (addon domain, subdomain, `public_html` vs site folder) or a cached 404 — not a routing quirk.
+- **Confirm which directory serves the domain — read-only first.** In order: the running process (`ss -ltnp` → the pid → `/proc/<pid>/cmdline`), the server config (`DocumentRoot`, `root`, a `-t` flag), the panel's domain page, or the user's answer. Only if none of those exist, upload a harmless `.html` marker — **that is a write**, so say so and get the yes first, even though the README's promise is that the docroot is confirmed before approval. A 404 for your probe usually means **wrong docroot** (addon domain, subdomain, `public_html` vs site folder) or a cached 404 — not a routing quirk, and not proof the upload failed.
 - Detect the stack by presence, not by reading secrets: `wp-config.php` **exists** (WordPress), `artisan` + `public/index.php` (Laravel), `index.php` alone. Do not open `wp-config.php` — it puts database credentials in your transcript.
 - Note whether the site is commerce: it changes what you may test and what you may change.
 
 ## Phase 3 — Access, ranked by how little the user hands over
 
-**This document holds no credentials, and you must never ask for one in a chat log.** Access comes from the user, so **ask for it — do not wait to be offered it.** State what you need, why, and how it will be revoked, then stop until it arrives. It is for this task only: state what you need and why, ask for the least that works, have it created for the named sites only, and have it revoked when you are done. Whatever is handed over is your blast radius — say that out loud before you take it, so the user is choosing it.
+**This document holds no credentials, and you must never ask for one in a chat log.** Access comes from the user, so **ask for it — do not wait to be offered it.** State what you need, why, and how it will be revoked, then stop until it arrives. It is for this task only: have it created for the named sites only, and revoked when you are done. Whatever is handed over is your blast radius — say that out loud before you take it, so the user is choosing it.
 
 1. **SSH key** — the smallest blast radius for a known host.
 2. **Session-scoped SFTP/FTPS account** limited to the site's docroot; user deletes it afterwards. Plain FTP is cleartext: refuse it.
@@ -105,7 +105,10 @@ Do this **before** trusting a backup and before "hardening" a box you have not l
 | `fpm-fcgi` / `cgi-fcgi` | `.user.ini` in the docroot, else pool `php_admin_value` | `.user.ini` is cached for `user_ini.cache_ttl` (default 300s); re-probing inside that window shows the old value. |
 | **nginx + php-fpm** | **`.htaccess` is ignored entirely** | Use the pool `php_admin_value` or fastcgi `PHP_VALUE`. Never ship a `.htaccess` block to an nginx host and call it done. |
 | Docker (official `php` / `wordpress` images) | add a `.ini` under `conf.d/`, mount it as a volume, then **recreate** the container | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `restart` does not pick up a new mount — recreate. Apache variants are mod_php (`.htaccess` works); FPM variants are not. |
-| Unknown (`frankenphp`, `cli-server`, `apache2filter`, …) | do not guess | Report the SAPI and ask, or use that product's own config. |
+| `cli-server` (PHP's built-in `php -S`) | the launch line itself: `php -d session.upload_progress.enabled=0 -S 127.0.0.1:PORT` or `php -c hardening.ini -S …` | `.htaccess` and `.user.ini` are **silently ignored** — no 500, no warning, the value just stays On (measured 2026-10-22). The setting lives in the process, so it reverts the moment anyone restarts without the flag: put the exact launch line in the hand-back. |
+| Unknown (`frankenphp`, `apache2filter`, …) | do not guess | Report the SAPI and ask, or use that product's own config. |
+
+- **Silent failure is the dangerous case.** A `500` at least tells you the mechanism was rejected. Where the mechanism is ignored outright (`nginx` with `.htaccess`, `cli-server` with either file) you get a `200` and an unchanged value — so always read the value back, never infer success from the status code.
 
 Write the block **outside** `# BEGIN WordPress … # END WordPress` so the CMS does not rewrite it:
 
@@ -147,7 +150,7 @@ Give these steps in the user's language, in this order, and warn about the inter
 ## Phase 9 — Patch, and prove you patched
 
 - The real fix is the vendor's patched release **for that branch**: for `php2shell` (CVE-2026-109618 / CVE-2026-109619) that is **8.2.35, 8.3.36, 8.4.27, 8.5.12** (released 2026-10-21). A lower version on the same branch is unpatched; a higher one is fine. Every branch gets its own release on the same day — "8.2 is patched so 8.3 must be" is a false inference.
-- **A version string does not prove a patch.** Distro, CloudLinux and cPanel builds backport fixes without bumping the upstream version. Check the host's/distro's advisory or package changelog, or the panel's package version. For Docker official images, check the tag's last-pushed date against the vendor release date rather than assuming the tag was rebuilt.
+- **A version string does not prove a patch.** Distro, CloudLinux and cPanel builds backport fixes without bumping the upstream version — an Ubuntu `8.3.6` can carry the fix while the bare number looks older than `8.3.36`, and a string comparison gets it exactly backwards. Check the host's/distro's advisory or package changelog, or the panel's package version. For Docker official images, check the tag's last-pushed date against the vendor release date rather than assuming the tag was rebuilt.
 - **Cite every version claim you publish.** For `php2shell` the primary sources are the GitHub security advisories [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w) and [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp), plus the PHP release announcement. If you cannot reach the advisory while working, write **unverified** next to the version — do not assert it from memory, from this document, or from a chat message.
 - **A patch does not prove immunity.** A version bump fixes the CVE it was released for — the specific memory-safety mechanism, not every route that looks similar. Public PoCs written against the pre-patch behaviour may keep working against the patched release, because they attack a *different* chain (see Phase 9b). Report "patched for CVE-X per advisory" and keep the configuration mitigation; never report "no longer exploitable".
 - Point the user at `php.net/supported-versions.php` instead of hardcoding "8.2+".

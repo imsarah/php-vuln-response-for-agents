@@ -2,6 +2,16 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.9 — 2026-10-22 (no release yet)
+
+Four gaps that two independent agents hit when they actually ran the procedure (one with shell access on a real PHP server, one in its own sandbox):
+
+- **`cli-server` had no mechanism.** It now has a row: the `-d`/`-c` flags on the launch line, with the warning that the setting lives in the process and reverts on restart.
+- **Silent failure is now named.** A `500` announces a rejected mechanism; `.htaccess` on nginx and either file on `cli-server` are ignored without a word, so the value must be read back rather than inferred from a `200`.
+- **Phase 1 no longer assumes a local web server.** `curl 127.0.0.1` needs something listening; check with `ss -ltnp` first, otherwise ask the panel or the user.
+- **Phase 2 confirms the docroot read-only first** (process cmdline, server config, panel, user), and calls the marker upload what it is — a write that needs approval, not something implied by the README's promise.
+- Phase 9 names the concrete trap: an Ubuntu `8.3.6` can be patched where a string comparison with `8.3.36` says otherwise.
+
 ## 1.9.8 — 2026-10-22 (no release yet)
 
 - **The agent must ask for access, not wait for it.** The prompt now tells it to ask for site access and say exactly what it needs and why; Phase 3 says "ask for it — do not wait to be offered it", and the 60-second step notes the agent has no access of its own.
