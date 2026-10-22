@@ -10,7 +10,7 @@
 
 **本文是一套通用的 PHP 加固／修補流程。** php2shell（[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618)／[CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619)；公告：[GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w)、[GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)）僅為其實例，並非本文範圍：WordPress、Laravel 與原生 PHP 皆涵蓋在內。
 
-內容源自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 化的 WordPress），包含在拋棄式實驗環境中以公開 PoC 進行的 2×2 實測，以及取自上述公告的修補版本 8.2.35／8.3.36／8.4.27／8.5.12。
+內容源自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 化的 WordPress），包含在拋棄式實驗環境中以公開 PoC 進行的實測（四格，並非完整 2×2 —— 見 EXAMPLE.md），以及取自上述公告的修補版本 8.2.35／8.3.36／8.4.27／8.5.12。
 
 ## 一句話即可使用
 
@@ -45,7 +45,7 @@ My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just wa
 
 1. **送出上面的 prompt** —— 無需安裝。若想長期安裝為 skill，見 [INSTALL.md](INSTALL.md)，那是選項，不是必要條件。
 2. **填好兩行**：哪個網站、哪家主機，以及您想修補它，或懷疑它已被入侵。agent 需要權限時會**向您索取** —— 它本身沒有任何存取權。
-3. **它量測後會先停下**：在任何檔案更動之前，您應先收到上述四項 —— 實際 PHP 版本與 SAPI、確認的 docroot、是否已被入侵、該主機可用的機制。**您同意之後**，它才動手、讀回數值驗證、追蹤 PHP 與 WordPress 修補。
+3. **它量測後會先停下**：在任何檔案更動之前，您應先收到上述四項；其中「量測到什麼」應包含 —— 實際 PHP 版本與 SAPI、確認的 docroot、是否已被入侵、該主機可用的機制。**您同意之後**，它才動手、讀回數值驗證、追蹤 PHP 與 WordPress 修補。
 4. **閱讀最後的報告**：每個網站屬於四種狀態之一 —— 僅緩解、已修補、已修補但保留緩解、仍存在漏洞 —— 以及接下來必須由您完成的事項。
 
 **存取權限由您提供。** 本文件不含任何憑證，也沒有內建任何憑證 —— 沒有東西可以外洩。也就是說，agent 只能到達您交給它的範圍，而**您給多少權限，它就有多大的影響半徑**。請給最少：用完即刪的 SFTP 帳戶、可撤銷的金鑰，或事後刪除的控制台權杖，不要給主密碼；先備份；完成後立即撤銷。

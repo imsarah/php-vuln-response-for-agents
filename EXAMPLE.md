@@ -12,6 +12,7 @@ This is the session the playbook was distilled from, written up so you can see w
 SSH was not enabled on the account, and the panel did not expose the ini values, so a web probe was the last resort. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
 
 ```php
+<?php
 if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }
 echo json_encode(['v'=>PHP_VERSION,'sapi'=>php_sapi_name(),'ini'=>php_ini_loaded_file(),
                   'up'=>ini_get('session.upload_progress.enabled'),
@@ -42,7 +43,7 @@ Production was switched in one window: PHP 7.4 → 8.3, sixteen plugins updated,
 
 ## Phase 9b — the lab run, and what it actually proved
 
-A public PoC had appeared, so it was built inside a disposable container on a spare machine, bound to `127.0.0.1`, never against the site. Four cells, one variable at a time:
+A public PoC had appeared, so it was built inside a disposable container on a spare machine, bound to `127.0.0.1`, never against the site. Four cells, one variable at a time — but not the full 2×2: the patched build with `upload_progress` Off was never run.
 
 | Build | `upload_progress` | Result |
 |---|---|---|
@@ -51,7 +52,7 @@ A public PoC had appeared, so it was built inside a disposable container on a sp
 | 8.2.35 (patched) | On | still RCE |
 | 8.3.36 (patched) | On | still RCE |
 
-The conclusion was not "the patch failed". It was that this PoC attacks a different chain — session-content injection through an attacker-writable serialize handler plus a gadget class — which the vendor patch does not cover. **The mitigation, not the version, is what closed it**, and the mitigation stayed on after patching, as the advisory itself recommends.
+The conclusion was not "the patch failed". It was that this PoC attacks a different chain — session-content injection through an attacker-writable serialize handler plus a gadget class — which the vendor patch does not cover. **The mitigation, not the version, is what closed it** on the build where it was tested, and the mitigation stayed on after patching, as the advisory itself recommends.
 
 ## Phase 10 — the hand-back
 

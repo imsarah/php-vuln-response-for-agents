@@ -43,7 +43,7 @@ Version 1.9.11 — 2026-10-22. This document is the procedure; the repository ch
 
 Ordered from safest to riskiest. Use the first one available.
 
-1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-public path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`), so it never leaves the box. **Check that something is actually listening first** (`ss -ltnp` or `curl -sI http://127.0.0.1/`): on a box with no local web server that read returns nothing, which is not the same as "the probe failed".
+1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-guessable path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN" -H "X-Check: REPLACE_ME"`), so it never leaves the box. **Check that something is actually listening first** (`ss -ltnp` or `curl -sI http://127.0.0.1/`): on a box with no local web server that read returns nothing, which is not the same as "the probe failed".
 2. **Panel API:** some panels expose the per-domain PHP version and handler. Use it if present.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
@@ -72,8 +72,8 @@ echo json_encode([
 ## Phase 2 — Identify the target (confirm the docroot)
 
 - **Baseline first:** status code *and* body hash — `curl -s https://DOMAIN/ | sha256sum` — so a later cached or defaced 200 is not mistaken for success.
-- `dig +short DOMAIN NS A`; `curl -sI https://DOMAIN/`; record `server:`, cache headers (`cf-ray`, `x-litespeed-cache`, `surecache-status`). Cloudflare is not the only CDN (QUIC.cloud, Sucuri, Fastly).
-- **Confirm which directory serves the domain — read-only first.** In order: the running process (`ss -ltnp` → the pid → `/proc/<pid>/cmdline`), the server config (`DocumentRoot`, `root`, a `-t` flag), the panel's domain page, or the user's answer. Only if none of those exist, upload a harmless `.html` marker — **that is a write**, so say so and get the yes first, even though the README's promise is that the docroot is confirmed before approval. A 404 for your probe usually means **wrong docroot** (addon domain, subdomain, `public_html` vs site folder) or a cached 404 — not a routing quirk, and not proof the upload failed.
+- `dig +short DOMAIN NS; dig +short DOMAIN A` (one type per query — `dig` keeps only the last type given); `curl -sI https://DOMAIN/`; record `server:`, cache headers (`cf-ray`, `x-litespeed-cache`, `surecache-status`). Cloudflare is not the only CDN (QUIC.cloud, Sucuri, Fastly).
+- **Confirm which directory serves the domain — read-only first.** In order: the running process (`ss -ltnp` → the pid → `/proc/<pid>/cmdline`), the server config (`DocumentRoot`, `root`, a `-t` flag), the panel's domain page, or the user's answer. Only if none of those exist, upload a harmless `.html` marker — **that is a write**, so say so and get the yes first, even though the operator was promised the docroot is confirmed before approval. A 404 for your probe usually means **wrong docroot** (addon domain, subdomain, `public_html` vs site folder) or a cached 404 — not a routing quirk, and not proof the upload failed.
 - Detect the stack by presence, not by reading secrets: `wp-config.php` **exists** (WordPress), `artisan` + `public/index.php` (Laravel), `index.php` alone. Do not open `wp-config.php` — it puts database credentials in your transcript.
 - Note whether the site is commerce: it changes what you may test and what you may change.
 
@@ -107,7 +107,7 @@ Do this **before** trusting a backup and before "hardening" a box you have not l
 | `apache2handler` (mod_php) | `.htaccess` → `php_value` if `AllowOverride` allows, else per-vhost `php.ini` | A disallowed `php_value` returns **500** — revert immediately. |
 | `fpm-fcgi` / `cgi-fcgi` | `.user.ini` in the docroot, else pool `php_admin_value` | `.user.ini` is cached for `user_ini.cache_ttl` (default 300s); re-probing inside that window shows the old value. |
 | **nginx + php-fpm** | **`.htaccess` is ignored entirely** | Use the pool `php_admin_value` or fastcgi `PHP_VALUE`. Never ship a `.htaccess` block to an nginx host and call it done. |
-| Docker (official `php` / `wordpress` images) | Apache variants: `.htaccess` → `php_value`, because `conf-enabled/docker-php.conf` sets `AllowOverride All` for `/var/www/`. FPM variants: a `.ini` under `conf.d/` (mounted, or written then **recreate**) | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `.htaccess` lives in the docroot, so it survives a recreate — a file written into the container does not. `restart` does not pick up a new mount; only recreate does. **Verify the override before assuming**: read `conf-enabled/docker-php.conf`, or fetch a file inside a directory you denied — `403` proves `.htaccess` is honoured. |
+| Docker (official `php` / `wordpress` images) | Apache variants: `.htaccess` → `php_value`, because `conf-enabled/docker-php.conf` sets `AllowOverride All` for `/var/www/`. FPM variants: a `.ini` under `conf.d/` (mounted, then **recreate**; or written into the container, then `restart`) | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `.htaccess` lives in the docroot, so it survives a recreate only if the docroot volume is reattached (next bullet) — a file written into the container does not survive one at all. `restart` does not pick up a new mount; only recreate does. **Verify the override before assuming**: read `conf-enabled/docker-php.conf`, or fetch a file inside a directory you denied — `403` proves `.htaccess` is honoured. |
 | `cli-server` (PHP's built-in `php -S`) | the launch line itself: `php -d session.upload_progress.enabled=0 -S 127.0.0.1:PORT` or `php -c hardening.ini -S …` | `.htaccess` and `.user.ini` are **silently ignored** — no 500, no warning, the value just stays On (measured 2026-10-22). The setting lives in the process, so it reverts the moment anyone restarts without the flag: put the exact launch line in the hand-back. |
 | Unknown (`frankenphp`, `apache2filter`, …) | do not guess | Report the SAPI and ask, or use that product's own config. |
 
@@ -132,8 +132,8 @@ Give these steps in the user's language, in this order, and warn about the inter
 2. **Confirm a restore point** exists and the change is inside a low-traffic window.
 3. **Enable the extensions first** (`mysqli`/`nd_mysqli`, `pdo_mysql`, `gd`, `mbstring`, `curl`, `zip`, `intl`), then switch the version — otherwise the site is broken in between.
 4. Supported branch only; check `php.net/supported-versions.php` rather than a version quoted in the ticket.
-5. If the panel exposes ini settings, set `session.upload_progress.enabled=Off`; if it hides `session.*`, use the `.htaccess` block.
-6. Restore limits and upload sizes; purge caches (plugin, LiteSpeed, CDN).
+5. If the panel exposes ini settings, set `session.upload_progress.enabled=Off`; if it hides `session.*`, use the Phase 5 mechanism for that SAPI (the `.htaccess` block only on LiteSpeed or mod_php). Have the user read the value back and send it to you — a saved setting is not an applied one.
+6. Restore limits and upload sizes, and read them back the same way; purge caches (plugin, LiteSpeed, CDN).
 7. Give a rollback step: switch back to the previous version, and what to do if plugins break.
 
 ## Phase 7 — Apply the change safely
@@ -170,7 +170,7 @@ Give these steps in the user's language, in this order, and warn about the inter
 When a working PoC for the CVE is public, use it to *measure your posture*, never to attack production.
 
 0. **Get the Phase 0 tooling authorisation first**, and read the PoC source — `Dockerfile`, payload, any install script — before you build it. A Dockerfile runs arbitrary `RUN` steps with build privileges and can reach the network during the build; binding the container to `127.0.0.1` does not contain that.
-1. **Build the target in a disposable container**, from a copy on a machine you control: `docker build --network=none -t lab . && docker run -d --network=none -p 127.0.0.1:18080:80 lab` (drop `--network=none` only if the build genuinely needs packages, and then say so). Never mount the Docker socket into the lab, never run it on the production host's Docker daemon if you can use another machine.
+1. **Build the target in a disposable container**, from a copy on a machine you control: `docker build --network=none -t lab . && docker run -d -p 127.0.0.1:18080:80 lab` (drop `--network=none` only if the build genuinely needs packages, and then say so; it does not go on `run`, where it would leave the published port unreachable and the PoC measuring nothing). Never mount the Docker socket into the lab, never run it on the production host's Docker daemon if you can use another machine.
 2. **Reproduce the vulnerable case first.** If the PoC cannot pop the pre-patch build, it is not measuring anything — stop and read it before drawing conclusions.
 3. **Run the 2×2 matrix**, changing one variable at a time: `{pre-patch, patched} × {mitigation off, mitigation on}`. Record the exact command and the literal output of each cell.
 4. **Interpret honestly.** If the exploit still succeeds on the patched build with the mitigation off, the PoC is not exercising the patched path — the mitigation, not the version, is what closes it. Say that in the report instead of quoting the version number.
@@ -194,9 +194,9 @@ Report, in the user's language:
 
 | Symptom | Real meaning | Do this |
 |---|---|---|
-| Probe returns the CMS 404 | Usually **wrong docroot** or a cached 404 — not routing | Confirm docroot with an `.html` marker; bypass cache; retest |
+| Probe returns the CMS 404 | Usually **wrong docroot** or a cached 404 — not routing | Confirm docroot read-only first (Phase 2), an `.html` marker only with approval; bypass cache; retest |
 | Probe 404s only under `uploads/` | Host denies PHP execution there | Do not weaken it; measure via SSH, panel, or `127.0.0.1` |
-| `500` right after `php_value` | Directives not permitted for that SAPI | Revert; use `.user.ini`, pool config, or panel settings |
+| `500` right after `php_value` | Directives not permitted for that SAPI | Revert; use `.user.ini`, pool config, or panel settings, then read the value back |
 | Value unchanged when re-probed within 5 min | `.user.ini` cache TTL (default 300s) | Wait out the TTL, then re-probe before concluding failure |
 | Change "did nothing" | CDN or page cache | Purge, retest with a random query string, hit the origin |
 | `You do not have the feature "multiphp"` | Panel feature not licensed | The user must change the version in the UI |
@@ -205,11 +205,11 @@ Report, in the user's language:
 | `sftp://` authenticates, then `Received EOF while reading sftp packet size` | SFTP subsystem disabled on that host | Use FTPS on :21 (`curl --ssl-reqd`), never plain FTP |
 | Your `.htaccess` block vanished | Plugin or auto-update rewrote the file | Move the rule out of plugin-owned scope; re-verify by hash |
 | PoC still works on the "patched" build | The PoC attacks a different chain than the CVE (session-content injection, non-default serialize handler, gadget `__destruct`) | Keep the config mitigation on; report what the PoC depends on rather than the version |
-| Turning the mitigation off breaks an upload progress bar | The feature is rarely worth the exposure | Leave it off; if a plugin truly needs it, scope the change to that vhost and record the exception |
+| Applying the mitigation (upload progress off) breaks an upload progress bar | The feature is rarely worth the exposure | Leave it off; if a plugin truly needs it, scope the change to that vhost and record the exception |
 
 ## Notes and limits
 
-- An account's own `php.ini` (often `/home/<user>/php.ini`, `ini` in the probe) may be **readable but not writable** (`550`) — read it to know what is actually loaded, then set the directive through `.user.ini` in the docroot instead.
+- An account's own `php.ini` (often `/home/<user>/php.ini`, `ini` in the probe) may be **readable but not writable** (`550`) — read it to know what is actually loaded, then set the directive through the Phase 5 mechanism for that SAPI instead (`.user.ini` in the docroot on FPM/CGI; mod_php ignores it), and read it back.
 - The ini directives here were applied during the `php2shell` response (CVE-2026-109618 / CVE-2026-109619, `session.upload_progress`). **Map the directive to the CVE you are handling**, with a source link in the record — these settings do nothing for an unrelated bug.
 - [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp) recommends keeping `session.upload_progress.enabled=0` **even after patching** — the feature is rarely needed and rarely tested, and the patch covers the demonstrated lifecycle paths, not every one. Treat "patched" and "mitigation removed" as two separate decisions.
 - Extension names differ by panel: CloudLinux "Select PHP Version" may list `nd_mysqli` / `nd_pdo_mysql` next to `mysqli` / `pdo_mysql`. Enable the right one and diff the extension list before and after.
@@ -225,7 +225,7 @@ WordPress sites are the majority of what this playbook gets pointed at, and "pat
 2. **Patch WordPress itself** — core, plugins, themes.
 3. **Harden the site** — settings and files, so a plugin compromise does not become a shell.
 
-Do them in that order unless the site is already compromised. Everything below is from a real response; commands are `wp-cli` unless noted.
+Do them in that order unless the site is already compromised. Everything below is from a real response unless marked otherwise; commands are `wp-cli` unless noted.
 
 ## A0. Pre-flight (do not skip)
 
@@ -235,7 +235,7 @@ wp core verify-checksums             # Integrity: files that do not match the re
 wp plugin list --update=available    # What is actually outdated
 wp theme list --update=available
 wp user list --role=administrator    # Who can install code
-wp db size --tables --human          # Before you dump
+wp db size --tables --human-readable # Before you dump
 ```
 
 - **Backup first**: files + database, outside the webroot. A dump in the docroot is a public file.
@@ -251,12 +251,12 @@ Plenty of WordPress sites cannot run `wp` at all — including the **official `w
 
 - **Backup from the panel first**: files (or at least `wp-content`) *and* the database export. A dashboard update cannot be undone by the host.
 - **Stash a copy of the plugin folder and its version** before updating it (`wp-content/plugins/<slug>` → download via File Manager). This is your rollback: re-upload the old folder, or use **Plugins → Add New → Upload Plugin** with the previous zip.
-- **Update one group at a time**, starting with the plugins nobody can live without (security, commerce, forms). Refresh the dashboard between batches and look for the "Briefly unavailable for scheduled maintenance" screen or a leftover `wp-content/.maintenance` file — delete it once the batch finished.
+- **Update one group at a time**, starting with the plugins nobody can live without (security, commerce, forms). Refresh the dashboard between batches and look for the "Briefly unavailable for scheduled maintenance" screen or a leftover `.maintenance` file in the WordPress root (next to `wp-config.php`) — delete it once the batch finished.
 - **Core update** the same way: Dashboard → Updates, or the panel's WordPress installer if it bundles one. Never update core and a page builder in the same sitting.
-- **No dry run means staging is the dry run.** Use the prefixed-copy trick in §0, run the dashboard updates there first, then repeat on production.
+- **No dry run means staging is the dry run.** Use the prefixed-copy trick from the pre-flight section, run the dashboard updates there first, then repeat on production.
 - If a batch dies mid-way, **do not immediately retry the whole batch**: refresh, note which plugin's row still shows an update, and do that one alone.
 
-*This section is written from the WordPress interface, not from a live run on a host without `wp-cli`; treat the timings as guidance and the backups as mandatory.*
+*The dashboard steps in this section are written from the WordPress interface, not from a live run on a host without `wp-cli` (the two Docker bullets are from a live run); treat the timings as guidance and the backups as mandatory.*
 
 ## A1. Patch PHP for a WordPress site
 
@@ -334,7 +334,7 @@ Read both back with `wp config get DISALLOW_FILE_EDIT` / `wp config get DISALLOW
 |---|---|---|
 | *"missing the MySQL extension"* | New PHP branch has `mysqli` disabled | Enable the extension, or switch back immediately |
 | Every page, including `wp-login.php`, shows a warning | A plugin/theme major update removed a file another one requires | `wp plugin list`, then pin the offender back to its last working version |
-| *"Briefly unavailable for scheduled maintenance"* | A core/plugin update left `.maintenance` behind | Delete `wp-content/.maintenance` once the update is finished |
+| *"Briefly unavailable for scheduled maintenance"* | A core/plugin update left `.maintenance` behind | Delete `.maintenance` in the WordPress root once the update is finished |
 | Admin requires a database update and the front end looks broken | Elementor/LearnPress/WooCommerce DB migration pending | Sign in to wp-admin once, run the upgrade, then purge caches |
 | Front end fine, admin blank/500 | `memory_limit` too low after the switch | Restore the previous limit (256M is a sane floor for page builders) and read the effective value back |
 | `.htaccess` block vanished | LiteSpeed Cache / Wordfence / permalink save rewrote it | Move the rule out of plugin-owned scope; re-verify by hash |
@@ -368,6 +368,7 @@ This is the session the playbook was distilled from, written up so you can see w
 SSH was not enabled on the account, and the panel did not expose the ini values, so a web probe was the last resort. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
 
 ```php
+<?php
 if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }
 echo json_encode(['v'=>PHP_VERSION,'sapi'=>php_sapi_name(),'ini'=>php_ini_loaded_file(),
                   'up'=>ini_get('session.upload_progress.enabled'),
@@ -398,7 +399,7 @@ Production was switched in one window: PHP 7.4 → 8.3, sixteen plugins updated,
 
 ## B9b — the lab run, and what it actually proved
 
-A public PoC had appeared, so it was built inside a disposable container on a spare machine, bound to `127.0.0.1`, never against the site. Four cells, one variable at a time:
+A public PoC had appeared, so it was built inside a disposable container on a spare machine, bound to `127.0.0.1`, never against the site. Four cells, one variable at a time — but not the full 2×2: the patched build with `upload_progress` Off was never run.
 
 | Build | `upload_progress` | Result |
 |---|---|---|
@@ -407,7 +408,7 @@ A public PoC had appeared, so it was built inside a disposable container on a sp
 | 8.2.35 (patched) | On | still RCE |
 | 8.3.36 (patched) | On | still RCE |
 
-The conclusion was not "the patch failed". It was that this PoC attacks a different chain — session-content injection through an attacker-writable serialize handler plus a gadget class — which the vendor patch does not cover. **The mitigation, not the version, is what closed it**, and the mitigation stayed on after patching, as the advisory itself recommends.
+The conclusion was not "the patch failed". It was that this PoC attacks a different chain — session-content injection through an attacker-writable serialize handler plus a gadget class — which the vendor patch does not cover. **The mitigation, not the version, is what closed it** on the build where it was tested, and the mitigation stayed on after patching, as the advisory itself recommends.
 
 ## B10 — the hand-back
 

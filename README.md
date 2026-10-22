@@ -17,7 +17,7 @@ A step-by-step playbook for an AI agent (or a person new to PHP) that has to har
 
 **It is a general PHP hardening/patching procedure.** The php2shell disclosure ([CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619); advisories [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w), [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)) is the worked example it was distilled from, not its scope: WordPress, Laravel and plain PHP are all covered, and the CVE-specific parts are labelled as such.
 
-Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a 2x2 lab run of a public PoC against patched and unpatched builds, and the patched releases 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 taken from those advisories.
+Distilled from a live response across LiteSpeed shared hosting, cPanel/CloudLinux and Dockerised WordPress — including a lab run of a public PoC against patched and unpatched builds (four cells, not the full 2x2 — see EXAMPLE.md), and the patched releases 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 taken from those advisories.
 
 **Upstream claims last verified: 2026-10-21** against the advisories linked above. If today's date is much later, re-check them before repeating them.
 
@@ -54,7 +54,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 1. **Send the prompt above.** Nothing to install. If you want it installed permanently, [INSTALL.md](INSTALL.md) has the one command — that is optional, not a requirement.
 2. **Fill in the two lines**: which site and host, and whether you want it patched or you think it was already hit. The agent will ask you for access when it needs it — it does not have any of its own.
-3. **It measures, then stops.** Expect the four answers above before any file changes: the real PHP version and SAPI, the confirmed docroot, whether there is compromise, and the mechanism that works on that host. Only after you approve does it apply anything, verify by reading the value back, and patch PHP and WordPress.
+3. **It measures, then stops.** Expect the four answers above before any file changes; "what it measured" should include the real PHP version and SAPI, the confirmed docroot, whether there is compromise, and the mechanism that works on that host. Only after you approve does it apply anything, verify by reading the value back, and patch PHP and WordPress.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
 **You supply the access.** This document holds no credentials and none are bundled: there is nothing in it to leak. That means the agent can only reach what you hand it, and whatever you hand it is its blast radius. Give the least that works — a session-scoped SFTP account, a key you can revoke, or a panel token you will delete afterwards, not your master password — take a backup first, and revoke when it is done.
@@ -110,15 +110,15 @@ This is a procedure for an authorised operator, not an autonomous exploit kit.
 
 ## Install as a skill
 
-`SKILL.md` is self-contained — the 10 phases, the WordPress appendix and a redacted worked example in one file, so an agent that installs only that file chases no dead links. See [INSTALL.md](INSTALL.md) for Hermes, Claude Code, Grok (xAI) and generic agents.
+`SKILL.md` is self-contained — Phases 0–10, the WordPress appendix and a redacted worked example in one file, so an agent that installs only that file chases no dead links. See [INSTALL.md](INSTALL.md) for Hermes, Claude Code, Grok (xAI) and generic agents.
 
 ## Using it with an agent
 
-Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file. The playbook is deliberately mechanism-based rather than tool-based, so it works for any agent with shell, panel or file access. An agent with no execution tools can only advise — it should say so rather than claim it verified anything.
+Paste `SKILL.md` (or `GUIDE.md` for non-WordPress work) into the agent's context, or add it as a skill/instruction file. The playbook is deliberately mechanism-based rather than tool-based, so it works for any agent with shell, panel or file access. An agent with no execution tools can only advise — it should say so rather than claim it verified anything.
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.11**.
+Canonical history, with the review findings behind the revisions that came from one: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.11**.
 
 ## Licence
 

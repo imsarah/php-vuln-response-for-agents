@@ -6,7 +6,7 @@ WordPress sites are the majority of what this playbook gets pointed at, and "pat
 2. **Patch WordPress itself** — core, plugins, themes.
 3. **Harden the site** — settings and files, so a plugin compromise does not become a shell.
 
-Do them in that order unless the site is already compromised. Everything below is from a real response; commands are `wp-cli` unless noted.
+Do them in that order unless the site is already compromised. Everything below is from a real response unless marked otherwise; commands are `wp-cli` unless noted.
 
 ## 0. Pre-flight (do not skip)
 
@@ -16,7 +16,7 @@ wp core verify-checksums             # Integrity: files that do not match the re
 wp plugin list --update=available    # What is actually outdated
 wp theme list --update=available
 wp user list --role=administrator    # Who can install code
-wp db size --tables --human          # Before you dump
+wp db size --tables --human-readable # Before you dump
 ```
 
 - **Backup first**: files + database, outside the webroot. A dump in the docroot is a public file.
@@ -32,12 +32,12 @@ Plenty of WordPress sites cannot run `wp` at all — including the **official `w
 
 - **Backup from the panel first**: files (or at least `wp-content`) *and* the database export. A dashboard update cannot be undone by the host.
 - **Stash a copy of the plugin folder and its version** before updating it (`wp-content/plugins/<slug>` → download via File Manager). This is your rollback: re-upload the old folder, or use **Plugins → Add New → Upload Plugin** with the previous zip.
-- **Update one group at a time**, starting with the plugins nobody can live without (security, commerce, forms). Refresh the dashboard between batches and look for the "Briefly unavailable for scheduled maintenance" screen or a leftover `wp-content/.maintenance` file — delete it once the batch finished.
+- **Update one group at a time**, starting with the plugins nobody can live without (security, commerce, forms). Refresh the dashboard between batches and look for the "Briefly unavailable for scheduled maintenance" screen or a leftover `.maintenance` file in the WordPress root (next to `wp-config.php`) — delete it once the batch finished.
 - **Core update** the same way: Dashboard → Updates, or the panel's WordPress installer if it bundles one. Never update core and a page builder in the same sitting.
-- **No dry run means staging is the dry run.** Use the prefixed-copy trick in §0, run the dashboard updates there first, then repeat on production.
+- **No dry run means staging is the dry run.** Use the prefixed-copy trick from the pre-flight section, run the dashboard updates there first, then repeat on production.
 - If a batch dies mid-way, **do not immediately retry the whole batch**: refresh, note which plugin's row still shows an update, and do that one alone.
 
-*This section is written from the WordPress interface, not from a live run on a host without `wp-cli`; treat the timings as guidance and the backups as mandatory.*
+*The dashboard steps in this section are written from the WordPress interface, not from a live run on a host without `wp-cli` (the two Docker bullets are from a live run); treat the timings as guidance and the backups as mandatory.*
 
 ## 1. Patch PHP for a WordPress site
 
@@ -115,7 +115,7 @@ Read both back with `wp config get DISALLOW_FILE_EDIT` / `wp config get DISALLOW
 |---|---|---|
 | *"missing the MySQL extension"* | New PHP branch has `mysqli` disabled | Enable the extension, or switch back immediately |
 | Every page, including `wp-login.php`, shows a warning | A plugin/theme major update removed a file another one requires | `wp plugin list`, then pin the offender back to its last working version |
-| *"Briefly unavailable for scheduled maintenance"* | A core/plugin update left `.maintenance` behind | Delete `wp-content/.maintenance` once the update is finished |
+| *"Briefly unavailable for scheduled maintenance"* | A core/plugin update left `.maintenance` behind | Delete `.maintenance` in the WordPress root once the update is finished |
 | Admin requires a database update and the front end looks broken | Elementor/LearnPress/WooCommerce DB migration pending | Sign in to wp-admin once, run the upgrade, then purge caches |
 | Front end fine, admin blank/500 | `memory_limit` too low after the switch | Restore the previous limit (256M is a sane floor for page builders) and read the effective value back |
 | `.htaccess` block vanished | LiteSpeed Cache / Wordfence / permalink save rewrote it | Move the rule out of plugin-owned scope; re-verify by hash |

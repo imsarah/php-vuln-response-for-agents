@@ -13,10 +13,10 @@ Corrections are welcome, especially ones backed by a primary source (a vendor ad
 
 ## Review
 
-Every revision so far has been read at least once before publication, and what that review found is recorded in `CHANGELOG.md`.
+Where a revision came out of a review, what that review found is recorded in `CHANGELOG.md`. 1.0 was published before the first review (1.1), and not every entry records one.
 
 **Who does that review:** AI systems, not a human security team. To date: Claude (Anthropic, web and CLI) and Hermes Agent (a local model), asked to attack the document — contradict itself, break on a real host, or state something it cannot source. Independent agents were also given nothing but the prompt and run against real servers, including WordPress in Docker; the `CHANGELOG.md` entries say which runs produced which fix. The repository owner reviews and merges.
 
-That is worth knowing before you rely on this: an LLM review is not a security audit, and no entry here should be read as one. If a claim says it was measured, the changelog entry names the host and the command; if it cannot be reproduced, treat it as unverified.
+That is worth knowing before you rely on this: an LLM review is not a security audit, and no entry here should be read as one. If a claim says it was measured, look for the host and the command in its changelog entry; where the entry does not name them, or the result cannot be reproduced, treat it as unverified.
 
 A pull request is merged after (a) the claim is checked against its cited source and (b) a read-through for steps that could cause harm if followed literally. Commit messages name what changed and why; the test suite in `scripts/test_repo.py` runs on every push.

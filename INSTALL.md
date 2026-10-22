@@ -38,7 +38,7 @@ curl -fsSL https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-age
 
 Restart the session (or start a new one). Confirm with `skills_list` — it should appear as `php2shell-hardening-for-agents`. The description is the trigger: when a task involves hardening or patching a PHP **or WordPress** site, the agent loads the body automatically.
 
-To keep it updated later, replace `curl` with `git clone` once and `git pull` after.
+To keep it updated later, re-run the `curl`, or `git clone` the repository into that directory instead (it must be empty first) and `git pull` after.
 
 ## Claude Code
 
@@ -60,8 +60,6 @@ curl -fsSL https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-age
 
 Grok discovers skills from `./.grok/skills/` (walked up to the repo root), `~/.grok/skills/`, `~/.agents/skills/` and any enabled plugin's `skills/` directory; user-invocable skills also appear as `/<skill-name>`. Unknown frontmatter keys are ignored, so the `version` / `license` keys here are harmless.
 
-Grok is fully Claude Code compatible, so the Claude Code path above works as-is with no extra setup.
-
 Project-scoped alternative: `.grok/skills/php2shell-hardening-for-agents/SKILL.md` in the repo you are working in.
 
 ## Any other agent
@@ -73,6 +71,8 @@ Either:
 
 ## Keeping it current
 
+Re-run the install `curl` for your agent; it overwrites `SKILL.md` with the current `main`. Only if you cloned the repository instead (see Hermes above):
+
 ```bash
 cd ~/.hermes/skills/devops/php2shell-hardening-for-agents && git pull
 ```
@@ -80,8 +80,8 @@ cd ~/.hermes/skills/devops/php2shell-hardening-for-agents && git pull
 ## What the agent gets
 
 - The hard rules (back up, one change at a time, never claim unverified success)
-- A 10-phase procedure: authorise → identify → access → compromise check → mechanism by SAPI → apply → verify → patch → optional lab validation → hand back
+- Phases 0–10: authorise → measure → identify → access → compromise check → mechanism by SAPI → no-access instructions → apply → verify → patch → optional lab validation → hand back
 - A WordPress appendix: pre-flight, staging with a database prefix, `wp-cli` and the no-`wp-cli` route, plugin dependency groups, pinning a broken plugin back, destructive-action gates, and a WordPress failure table
-- A worked example with the mistakes left in (cached 404, `.user.ini` TTL, a plugin major version breaking `wp-login.php`, the 2×2 PoC lab)
+- A worked example with the mistakes left in (cached 404, `.user.ini` TTL, a plugin major version breaking `wp-login.php`, the PoC lab, which ran four cells rather than the full 2×2)
 - A failure-mode table for the traps that actually happen (root `.php` 404s, `php_value` 500s, `mysqli` disappearing after a version switch, CDN cache hiding changes)
 - The body assumes shell, panel or file access; an agent with no execution tools can only advise

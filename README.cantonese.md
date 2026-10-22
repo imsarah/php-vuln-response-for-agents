@@ -10,7 +10,7 @@
 
 **佢係一份通用嘅 PHP 加固／補丁流程。** php2shell（[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619)；advisory：[GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w)、[GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)）只係佢嘅**實例**，唔係範圍：WordPress、Laravel、純 PHP 都包。
 
-內容來自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 版 WordPress），包括喺拋棄式 lab 用公開 PoC 做 2×2 實測，同埋由 advisory 攞到嘅修補版本 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12。
+內容來自一次真實應變（LiteSpeed 共享主機、cPanel／CloudLinux、Docker 版 WordPress），包括喺拋棄式 lab 用公開 PoC 做實測（四格，唔係完整 2×2 —— 見 EXAMPLE.md），同埋由 advisory 攞到嘅修補版本 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12。
 
 ## 一句話就用得
 
@@ -45,7 +45,7 @@ My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want 
 
 1. **發上面嗰句 prompt** —— 唔使裝。想長期裝做 skill 先睇 [INSTALL.md](INSTALL.md)，嗰個係可選，唔係必須。
 2. **填兩行**：邊個站、邊間 host，同埋你想 patch 佢，定係懷疑已經被入侵。agent 需要權限時會**問你攞** —— 佢自己冇任何 access。
-3. **佢量度完就會停**：任何檔案改動之前，你要先收到上面講嘅四項 —— 真實 PHP 版本同 SAPI、確認咗嘅 docroot、有冇已被入侵、呢個環境邊種機制行得通。**你批准之後**，佢才落手改、讀返個值驗證、追 PHP 同 WordPress 補丁。
+3. **佢量度完就會停**：任何檔案改動之前，你要先收到上面講嘅四項；「量到咩」要包括 —— 真實 PHP 版本同 SAPI、確認咗嘅 docroot、有冇已被入侵、呢個環境邊種機制行得通。**你批准之後**，佢才落手改、讀返個值驗證、追 PHP 同 WordPress 補丁。
 4. **睇最後嗰份報告**：每個站四種狀態之一 —— 只係緩解、已修補、已修補但仍然保留緩解、仲係有漏洞 —— 同埋你要跟手做咩。
 
 **權限要你自己畀。** 呢份文件冇任何憑證、亦冇內含任何憑證 —— 冇嘢可以洩漏。即係 agent 只去到你能夠畀佢去嘅範圍，而**你畀幾多權限，佢就有幾大破壞半徑**。畀最少：用完就刪嘅 SFTP 帳戶、可以撤銷嘅 key、或者事後刪走嘅 panel token，唔好畀主密碼；先備份；做完即刻撤銷。
