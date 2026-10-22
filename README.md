@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.2-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.3-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -27,15 +27,14 @@ Paste this into an agent, fill in the two lines, send:
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and use it to fix my site. Run read-only commands only until I approve your plan —
-do not edit, delete or install anything before that. Measure instead of assuming;
-ask me for anything you cannot detect.
+and fetch every file it links to, then use it to fix my site. Run read-only commands
+only until I approve your plan — do not edit, delete or install anything before that.
+Measure instead of assuming; ask me for anything you cannot detect.
 
-My site: <WordPress / plain PHP / not sure>, on <host>
-What I want: <patch it / I think it was hacked / a warning I saw>
+My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just want to patch.]
 ```
 
-**Two kinds of agent, two outcomes.** With shell, SSH or panel access it can measure and change things itself. Chat-only (ChatGPT, a plain Claude window) can only give you commands to run and paste back — if it claims it checked your server, it did not.
+**Two modes.** An agent with shell or SSH access can measure and change things itself. A chat-only agent can only give you read-only commands to run and paste back.
 
 **Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
 
@@ -114,7 +113,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.2**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.3**.
 
 ## Licence
 

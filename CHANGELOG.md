@@ -2,6 +2,13 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.3 — 2026-10-21
+
+- Prompt takes the reviewer's exact wording for the **two agent modes** (shell/SSH can act; chat-only hands over read-only commands) and drops every named agent from the prompt block.
+- The **fill-in line** is the reviewer's: `My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just want to patch.]`
+- The prompt also tells the agent to **fetch every file the skill links to**, so a reader is not relying on one URL being complete.
+- Kept from the previous revision: the read-only-until-approved constraint, the four expected answers, and the tag-pinned URL note.
+
 ## 1.9.2 — 2026-10-21
 
 Review of the 1.9.1 prompt. Four changes, all in the README block:

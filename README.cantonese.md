@@ -18,17 +18,16 @@
 
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
-and use it to fix my site. Run read-only commands only until I approve your plan —
-do not edit, delete or install anything before that. Measure instead of assuming;
-ask me for anything you cannot detect.
+and fetch every file it links to, then use it to fix my site. Run read-only commands
+only until I approve your plan — do not edit, delete or install anything before that.
+Measure instead of assuming; ask me for anything you cannot detect.
 
-My site: <WordPress / 純 PHP / 唔確定>，喺 <邊間 host>
-我想：<patch 佢 / 懷疑俾人入侵 / 見到個警告>
+My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want to patch.]
 ```
 
-**兩種 agent，兩種結果。** 有 shell、SSH 或 panel 權限嘅，佢可以自己量度同落手；純聊天（ChatGPT、普通 Claude 視窗）只可以畀你指令、你貼返結果畀佢 —— 佢話「我睇過你部機」都係假嘅。
+**兩種模式。** 有 shell 或 SSH 權限嘅 agent，可以自己量度同改嘢。純聊天嘅 agent，只可以畀你 read-only 指令，你貼返結果畀佢。
 
-**落手之前，要佢答你四樣：** 量到咩、打算改咩、點備份同點還原、邊啲要你主機商做。少一樣就係安全問題，叫停個 run。
+**落手之前，要佢答你四樣：** 量到咩、打算改咩、點備份同點還原、邊啲要你主機商做。少一樣就係安全問題 —— 叫停個 run。
 
 **固定版本：** 將網址裡面 `main` 換成 `v1.8`，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
 
