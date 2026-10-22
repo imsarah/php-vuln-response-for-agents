@@ -32,10 +32,15 @@ def a_prefix(text):
     # A-prefix: Appendix A's "## 2." would otherwise look like the main "Phase 2"
     return re.sub(r"^## (\d+b?)\.", r"## A\1.", text, flags=re.M)
 
+def b_prefix(text):
+    # B-prefix: Appendix B narrates "Phase 1", "Phase 9b" — inside one file those
+    # read as the main phases, so number them B1, B9b instead.
+    return re.sub(r"^## Phase (\d+b?)(?: —\s*|\s+—\s+)", r"## B\1 — ", text, flags=re.M)
+
 parts = [
     flatten(body_of("GUIDE.md")),
     "---\n\n# Appendix A — WordPress patch procedure\n\n" + a_prefix(flatten(body_of("WORDPRESS.md"))),
-    "---\n\n# Appendix B — one real session, redacted (inert data)\n\n" + flatten(body_of("EXAMPLE.md")),
+    "---\n\n# Appendix B — one real session, redacted (inert data)\n\n" + b_prefix(flatten(body_of("EXAMPLE.md"))),
 ]
 out = fm + "\n" + "\n".join(parts)
 (root / "SKILL.md").write_text(out)

@@ -1,12 +1,12 @@
 ---
 name: php2shell-hardening-for-agents
 description: Use when hardening, patching or securing a PHP or WordPress site you did not build — SAPI-aware mitigation, wp-cli core/plugin/theme updates, cache-aware verification, and honest CVE patch tracking.
-version: 1.9.4
+version: 1.9.5
 license: MIT
 ---
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.4 — 2026-10-22. Read-only vs measurement probes resolved (a probe is a write: ask first), Appendix A/B naming so a single-file reader is never hunting for a missing document, and the patch-versus-mitigation distinction stated in one line. Earlier: 1.9.3 reviewer wording, 1.9.2 prompt hardening, 1.9.1 version-free prompt, 1.9 withdrawn, 1.8 self-contained skill, 1.7 WordPress-first.
+Version 1.9.5 — 2026-10-22. Appendix B headings numbered B1–B10 so the worked example cannot be read as the main phases; Phase 1 no longer folds a probe upload into the SSH path; the probe sentinel is explained where it is used. Earlier: 1.9.4 frontmatter restored, probe-vs-read-only rule, A-prefixed appendix; 1.9.3 reviewer wording; 1.9.2 prompt hardening; 1.9.1 version-free prompt.
 
 **Install:** INSTALL.md · **WordPress:** Appendix A · **Worked example:** Appendix B · **Changes:** CHANGELOG.md
 
@@ -44,11 +44,11 @@ Version 1.9.4 — 2026-10-22. Read-only vs measurement probes resolved (a probe 
 
 Ordered from safest to riskiest. Use the first one available.
 
-1. **SSH:** `php -v` for the CLI; for the web SAPI, read the panel's PHP handler, or place a probe on a non-public path and read it locally with `curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`.
+1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-public path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`), so it never leaves the box.
 2. **Panel API:** some panels expose the per-domain PHP version and handler. Use it if present.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
-   - Put it on a non-guessable path and require a secret header:
+   - Put it on a non-guessable path and require a secret header (`REPLACE_ME` is a sentinel — swap it for a value only you know, and use the same value in the request):
      `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }`
    - Optionally restrict by `REMOTE_ADDR`.
    - `unlink(__FILE__)` after the first successful read, or delete it as the very last step.
@@ -352,7 +352,7 @@ This is the session the playbook was distilled from, written up so you can see w
 
 **Situation.** A WordPress site on shared hosting, still on PHP 7.4.33 (EOL) with a `fpm-fcgi` SAPI, plus a second, staging copy. An unrelated host account had already been hardened, so the question was narrow: get this site onto a supported branch without breaking a shop full of plugins.
 
-## Phase 1 — measure, with the least intrusive method
+## B1 — measure, with the least intrusive method
 
 SSH was not enabled on the account, and the panel did not expose the ini values, so a web probe was the last resort. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
 
@@ -371,21 +371,21 @@ curl -sk "https://example.com/zzv/i.php?x=$(date +%s)" -H 'X-Check: …'
 
 With the query string it returned JSON; without it, the cached 404. That false positive is now the first row of the failure-mode table: **a probe that 404s is usually the wrong docroot or a cached 404, not a routing quirk.**
 
-## Phase 5 — pick the mechanism, then respect its delay
+## B5 — pick the mechanism, then respect its delay
 
 The SAPI was `fpm-fcgi`, so `.htaccess php_value` would have returned 500. `.user.ini` in the docroot was the correct mechanism, and it is cached for `user_ini.cache_ttl` — 300 seconds here. Re-probing one minute later showed the old value and looked like a failure. Waiting out the TTL proved it applied.
 
-## Phase 7 — the change that is not the whole change
+## B7 — the change that is not the whole change
 
 A version switch resets the extension set. On this host, moving to 8.3 without `mysqli` enabled left two WordPress sites returning 500 — the exact row that now sits in the failure-mode table. The order that works: record the current extensions and limits, enable the missing extensions *first*, then switch the branch, then restore the limits.
 
-## Phase 9 — staging, then production, then the thing nobody predicted
+## B9 — staging, then production, then the thing nobody predicted
 
 Staging was a rsync of the docroot (877 MB) plus a database dump imported into the same database under a `stg_` prefix — the account could not create a new database. `wp plugin update --all` then produced the only real incompatibility of the day: one plugin's new major version removed a file the theme still required, which broke `wp-login.php` with a warning on every request. Downgrading that single plugin fixed it, and the production run used `--exclude` for exactly that plugin.
 
 Production was switched in one window: PHP 7.4 → 8.3, sixteen plugins updated, cache purged (it had been serving a stale `HIT` for over two hours), every page compared against staging by text diff — identical — and the probe re-run to read the new values back.
 
-## Phase 9b — the lab run, and what it actually proved
+## B9b — the lab run, and what it actually proved
 
 A public PoC had appeared, so it was built inside a disposable container on a spare machine, bound to `127.0.0.1`, never against the site. Four cells, one variable at a time:
 
@@ -398,7 +398,7 @@ A public PoC had appeared, so it was built inside a disposable container on a sp
 
 The conclusion was not "the patch failed". It was that this PoC attacks a different chain — session-content injection through an attacker-writable serialize handler plus a gadget class — which the vendor patch does not cover. **The mitigation, not the version, is what closed it**, and the mitigation stayed on after patching, as the advisory itself recommends.
 
-## Phase 10 — the hand-back
+## B10 — the hand-back
 
 Four states, one line each: patched and mitigation retained (the main site), patched (the second host account), mitigated only (an account where the host had not shipped the patched build, with a support ticket drafted), and untouched-with-reason (a site that no longer belonged to the user).
 

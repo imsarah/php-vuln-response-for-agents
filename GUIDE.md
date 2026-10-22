@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.4 — 2026-10-22. Read-only vs measurement probes resolved (a probe is a write: ask first), Appendix A/B naming so a single-file reader is never hunting for a missing document, and the patch-versus-mitigation distinction stated in one line. Earlier: 1.9.3 reviewer wording, 1.9.2 prompt hardening, 1.9.1 version-free prompt, 1.9 withdrawn, 1.8 self-contained skill, 1.7 WordPress-first.
+Version 1.9.5 — 2026-10-22. Appendix B headings numbered B1–B10 so the worked example cannot be read as the main phases; Phase 1 no longer folds a probe upload into the SSH path; the probe sentinel is explained where it is used. Earlier: 1.9.4 frontmatter restored, probe-vs-read-only rule, A-prefixed appendix; 1.9.3 reviewer wording; 1.9.2 prompt hardening; 1.9.1 version-free prompt.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -40,11 +40,11 @@ Version 1.9.4 — 2026-10-22. Read-only vs measurement probes resolved (a probe 
 
 Ordered from safest to riskiest. Use the first one available.
 
-1. **SSH:** `php -v` for the CLI; for the web SAPI, read the panel's PHP handler, or place a probe on a non-public path and read it locally with `curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`.
+1. **SSH:** `php -v` gives the CLI version only. For the web SAPI read the panel's PHP handler; if the panel does not show it, use the probe from item 4 — placed on a non-public path and read from the server itself (`curl -s http://127.0.0.1/probe.php -H "Host: DOMAIN"`), so it never leaves the box.
 2. **Panel API:** some panels expose the per-domain PHP version and handler. Use it if present.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
-   - Put it on a non-guessable path and require a secret header:
+   - Put it on a non-guessable path and require a secret header (`REPLACE_ME` is a sentinel — swap it for a value only you know, and use the same value in the request):
      `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }`
    - Optionally restrict by `REMOTE_ADDR`.
    - `unlink(__FILE__)` after the first successful read, or delete it as the very last step.

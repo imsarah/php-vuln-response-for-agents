@@ -2,6 +2,14 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.5 — 2026-10-22
+
+Final pass from the third independent single-file test (4 of 5 checks passed; these are the leftovers):
+
+- **Appendix B headings clashed with the main phases** — the worked example narrated "Phase 1", "Phase 9b" inside the same file. They are now **B1–B10**, and a build assertion keeps them that way.
+- **Phase 1 folded a probe upload into the "safest" SSH path.** SSH now gives the CLI version only, with the web SAPI read from the panel or from the probe on the server itself.
+- **`REPLACE_ME` is explained where it is used** — a sentinel the operator swaps for a secret only they know.
+
 ## 1.9.4 — 2026-10-22
 
 Findings from the fresh-agent test the previous revision asked for (a clean subagent given only the prompt and the raw URL):
