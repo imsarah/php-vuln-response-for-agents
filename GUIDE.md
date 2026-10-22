@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.10 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
+Version 1.9.10 — 2026-10-22. This document is the procedure; the repository changelog holds the revision history.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 

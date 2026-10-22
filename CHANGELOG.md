@@ -2,7 +2,7 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
-## 1.9.10 — 2026-10-22 (no release yet)
+## 1.9.10 — 2026-10-22
 
 From a real WordPress-in-Docker run (official `wordpress:latest`, Apache + PHP 8.3.36, anonymous volume):
 
