@@ -2,6 +2,10 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.8 — 2026-10-22 (no release yet)
+
+- **The agent must ask for access, not wait for it.** The prompt now tells it to ask for site access and say exactly what it needs and why; Phase 3 says "ask for it — do not wait to be offered it", and the 60-second step notes the agent has no access of its own.
+
 ## 1.9.7 — 2026-10-22
 
 - **"Holds no credentials" was misleading for the shell/SSH mode.** True of the document, false of the agent you hand a key to. README (EN/Cantonese/zh-Hant), `INSTALL.md` and Phase 3 now say: the document ships no credentials, **you supply the access**, give the least that works, back up first, revoke afterwards — and whatever you hand over is the agent's blast radius.

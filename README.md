@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.7-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.8-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -31,6 +31,8 @@ and fetch every file it links to, then use it to fix my site. Run read-only comm
 only until I approve your plan — do not edit, delete or install anything before that,
 and ask before uploading a probe or marker file (that is a write).
 Measure instead of assuming; ask me for anything you cannot detect.
+If you need access to my site to do this, ask me for it and say exactly what you
+need and why — do not wait for me to offer it.
 
 My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just want to patch.]
 ```
@@ -39,7 +41,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 **Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
 
-**Fixed revision:** replace `main` in the URL with `v1.9.7` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
+**Fixed revision:** replace `main` in the URL with `v1.9.8` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
 
 ## Start here
 
@@ -51,7 +53,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 ## How to use it in 60 seconds
 
 1. **Send the prompt above.** Nothing to install. If you want it installed permanently, [INSTALL.md](INSTALL.md) has the one command — that is optional, not a requirement.
-2. **Fill in the two lines**: which site and host, and whether you want it patched or you think it was already hit.
+2. **Fill in the two lines**: which site and host, and whether you want it patched or you think it was already hit. The agent will ask you for access when it needs it — it does not have any of its own.
 3. **It measures, then stops.** Expect the four answers above before any file changes: the real PHP version and SAPI, the confirmed docroot, whether there is compromise, and the mechanism that works on that host. Only after you approve does it apply anything, verify by reading the value back, and patch PHP and WordPress.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
@@ -116,7 +118,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.7**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.8**.
 
 ## Licence
 

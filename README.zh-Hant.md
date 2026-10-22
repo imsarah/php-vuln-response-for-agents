@@ -22,6 +22,8 @@ and fetch every file it links to, then use it to fix my site. Run read-only comm
 only until I approve your plan — do not edit, delete or install anything before that,
 and ask before uploading a probe or marker file (that is a write).
 Measure instead of assuming; ask me for anything you cannot detect.
+If you need access to my site to do this, ask me for it and say exactly what you
+need and why — do not wait for me to offer it.
 
 My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just want to patch.]
 ```
@@ -30,7 +32,7 @@ My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just wa
 
 **動手之前，要求它回答四件事：** 量測到什麼、打算改什麼、如何備份與還原、哪些必須由主機商處理。缺任何一項即屬安全問題 —— 請中止。
 
-**固定版本：** 把網址中的 `main` 換成 `v1.9.7`，即鎖定你當日實際使用的內容。`main` 會即時收到修正，tag 則保證可重現 —— 安全文件建議鎖 tag。
+**固定版本：** 把網址中的 `main` 換成 `v1.9.8`，即鎖定你當日實際使用的內容。`main` 會即時收到修正，tag 則保證可重現 —— 安全文件建議鎖 tag。
 
 ## 從這裡開始
 
@@ -42,7 +44,7 @@ My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just wa
 ## 60 秒上手
 
 1. **送出上面的 prompt** —— 無需安裝。若想長期安裝為 skill，見 [INSTALL.md](INSTALL.md)，那是選項，不是必要條件。
-2. **填好兩行**：哪個網站、哪家主機，以及您想修補它，或懷疑它已被入侵。
+2. **填好兩行**：哪個網站、哪家主機，以及您想修補它，或懷疑它已被入侵。agent 需要權限時會**向您索取** —— 它本身沒有任何存取權。
 3. **它量測後會先停下**：在任何檔案更動之前，您應先收到上述四項 —— 實際 PHP 版本與 SAPI、確認的 docroot、是否已被入侵、該主機可用的機制。**您同意之後**，它才動手、讀回數值驗證、追蹤 PHP 與 WordPress 修補。
 4. **閱讀最後的報告**：每個網站屬於四種狀態之一 —— 僅緩解、已修補、已修補但保留緩解、仍存在漏洞 —— 以及接下來必須由您完成的事項。
 
