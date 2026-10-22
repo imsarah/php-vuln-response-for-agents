@@ -45,7 +45,7 @@ Ordered from safest to riskiest. Use the first one available.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
    - Put it on a non-guessable path and require a secret header:
-     `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'RANDOM') { http_response_code(404); exit; }`
+     `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }`
    - Optionally restrict by `REMOTE_ADDR`.
    - `unlink(__FILE__)` after the first successful read, or delete it as the very last step.
    - **Warn the user first:** a new `.php` under the web root during a PHP vulnerability window can be quarantined by Imunify360/Maldet, or blocked by hosts that deny PHP execution in `uploads/`. If PHP is denied there, do **not** loosen that rule to make the probe work — measure another way.

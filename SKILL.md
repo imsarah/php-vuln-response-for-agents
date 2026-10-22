@@ -49,7 +49,7 @@ Ordered from safest to riskiest. Use the first one available.
 3. **Ask the user** to read the version from their panel. Slowest, but zero exposure.
 4. **Web probe (last resort)** — only if 1–3 are impossible:
    - Put it on a non-guessable path and require a secret header:
-     `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'RANDOM') { http_response_code(404); exit; }`
+     `if (($_SERVER['HTTP_X_CHECK'] ?? '') !== 'REPLACE_ME') { http_response_code(404); exit; }`
    - Optionally restrict by `REMOTE_ADDR`.
    - `unlink(__FILE__)` after the first successful read, or delete it as the very last step.
    - **Warn the user first:** a new `.php` under the web root during a PHP vulnerability window can be quarantined by Imunify360/Maldet, or blocked by hosts that deny PHP execution in `uploads/`. If PHP is denied there, do **not** loosen that rule to make the probe work — measure another way.
@@ -221,7 +221,7 @@ WordPress sites are the majority of what this playbook gets pointed at, and "pat
 
 Do them in that order unless the site is already compromised. Everything below is from a real response; commands are `wp-cli` unless noted.
 
-## 0. Pre-flight (do not skip)
+## A0. Pre-flight (do not skip)
 
 ```bash
 wp core version                      # WP version
@@ -236,7 +236,7 @@ wp db size --tables --human          # Before you dump
 - **Staging is not optional for plugin updates.** Clone docroot (rsync) and import the dump. If the account cannot create a database, import into the *same* database under a prefix (`stg_`) and point the staging `wp-config.php` at it, then set `siteurl`/`home` to the staging hostname. Undo it afterwards by dropping the prefixed tables.
 - Check the PHP branch against the plugins **before** switching: `wp plugin list` plus the plugin's "requires PHP" header. A plugin that declares `Requires PHP: 7.4` may still break on 8.3.
 
-## 0b. When there is no wp-cli (shared hosting, no SSH)
+## A0b. When there is no wp-cli (shared hosting, no SSH)
 
 Plenty of WordPress sites cannot run `wp` at all. The procedure survives without it, but you lose the dry run and the precise rollback — so compensate with the stash and the staging copy.
 
@@ -249,7 +249,7 @@ Plenty of WordPress sites cannot run `wp` at all. The procedure survives without
 
 *This section is written from the WordPress interface, not from a live run on a host without `wp-cli`; treat the timings as guidance and the backups as mandatory.*
 
-## 1. Patch PHP for a WordPress site
+## A1. Patch PHP for a WordPress site
 
 The mechanics live in the main guide (Phase 5–9). WordPress-specific traps:
 
@@ -259,7 +259,7 @@ The mechanics live in the main guide (Phase 5–9). WordPress-specific traps:
 - **Purge every cache layer** after the switch: plugin cache, LiteSpeed/`x-litespeed-cache`, SureCache, Cloudflare. A stale `HIT` hides both fixes and breakage.
 - **Verify by text, not by status**: compare rendered text against staging (`difflib`/`diff <(curl … ) <(curl …)`), check `wp-login.php` renders, check one form's AJAX endpoint answers, and confirm no `Warning:`/`Fatal error` in the HTML of any page.
 
-## 2. Patch WordPress core, plugins, themes
+## A2. Patch WordPress core, plugins, themes
 
 On staging first, always:
 
@@ -283,7 +283,7 @@ wp core update && wp core update-db
 - **Inactive plugins are still attack surface.** Delete unused ones (`wp plugin delete <slug>`), which also removes their update burden.
 - **Auto-updates:** enabling them for minor/core security releases is usually right; do not enable them for plugins you have not tested.
 
-## 2b. Gates before anything destructive
+## A2b. Gates before anything destructive
 
 Deleting a plugin, overwriting a file, dropping the prefixed staging tables — each needs the same three steps, in this order:
 
@@ -296,7 +296,7 @@ Two specific traps:
 - **Never reinstall a plugin over a modified copy without diffing first.** Customised plugin/theme files are overwritten silently; diff `wp-content/plugins/<slug>` against the version you are installing, or take the folder aside first.
 - **`wp` refuses to run as root without `--allow-root`.** Adding the flag to get past the error is the wrong fix: run as the site user, or use `sudo -u <siteuser> wp …`.
 
-## 3. Harden the site (after the patches land)
+## A3. Harden the site (after the patches land)
 
 ```bash
 wp config set DISALLOW_FILE_EDIT true --raw       # No plugin/theme editor in wp-admin
@@ -317,7 +317,7 @@ wp config set DISALLOW_FILE_MODS false --raw      # keep installs working; true 
 - **After any suspected compromise**: rotate DB credentials, all salts (`wp config shuffle-salts`), admin passwords and hosting-panel credentials, then re-run the compromise check in Phase 4.
 - **Keep the WordPress `.htaccess` block intact** (`# BEGIN WordPress … # END WordPress`). Add your rules outside it, or the next permalink save wipes them.
 
-## 4. Failure modes you will actually hit
+## A4. Failure modes you will actually hit
 
 | Symptom | Real meaning | Do this |
 |---|---|---|
@@ -334,7 +334,7 @@ wp config set DISALLOW_FILE_MODS false --raw      # keep installs working; true 
 
 **Multisite:** out of scope for this document. Network-activated plugins update from the Network Admin and apply to every site; a single-site rollback does not undo a network-wide one. Get explicit approval before touching a network, and take a full database dump first.
 
-## 5. What "done" looks like
+## A5. What "done" looks like
 
 - `wp core verify-checksums` clean, `wp plugin list --update=available` empty (or every remaining pin documented).
 - Front end, `wp-login.php`, REST index and one form all answer 200 with no PHP warnings; rendered text matches staging.

@@ -28,9 +28,13 @@ def flatten(text):
     text = text.replace("WORDPRESS.md", "Appendix A").replace("EXAMPLE.md", "Appendix B")
     return text
 
+def a_prefix(text):
+    # A-prefix: Appendix A's "## 2." would otherwise look like the main "Phase 2"
+    return re.sub(r"^## (\d+b?)\.", r"## A\1.", text, flags=re.M)
+
 parts = [
     flatten(body_of("GUIDE.md")),
-    "---\n\n# Appendix A — WordPress patch procedure\n\n" + flatten(body_of("WORDPRESS.md")),
+    "---\n\n# Appendix A — WordPress patch procedure\n\n" + a_prefix(flatten(body_of("WORDPRESS.md"))),
     "---\n\n# Appendix B — one real session, redacted (inert data)\n\n" + flatten(body_of("EXAMPLE.md")),
 ]
 out = fm + "\n" + "\n".join(parts)
