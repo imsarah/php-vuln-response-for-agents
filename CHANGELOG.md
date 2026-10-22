@@ -2,6 +2,12 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.6 — 2026-10-22
+
+- **The 60-second section contradicted the prompt above it.** Step 1 said "install it once — one command" while the prompt says nothing needs installing. Step 1 now sends the prompt and calls installation optional.
+- **Step 3 read as if the agent applies changes by itself.** It now says the agent measures, stops, and waits for approval — matching the read-only constraint in the prompt.
+- "It does not act on its own" is now "it acts only on the approval you give in step 3", which is what the phases actually describe.
+
 ## 1.9.5 — 2026-10-22
 
 Final pass from the third independent single-file test (4 of 5 checks passed; these are the leftovers):

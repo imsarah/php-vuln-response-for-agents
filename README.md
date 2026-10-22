@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.5-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.6-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -39,7 +39,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 **Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
 
-**Fixed revision:** replace `main` in the URL with `v1.9.5` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
+**Fixed revision:** replace `main` in the URL with `v1.9.6` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
 
 ## Start here
 
@@ -50,12 +50,12 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 ## How to use it in 60 seconds
 
-1. **Install it once** — one command, see [INSTALL.md](INSTALL.md). Works in Hermes, Claude Code, Grok (xAI), or any agent that reads a markdown file.
-2. **Say the site and the problem**: "my WordPress site has a PHP CVE — check it, patch it, update the plugins, and tell me what version and SAPI you actually find."
-3. **The agent runs the phases**: authorise → measure the real version and SAPI → confirm the docroot → check for compromise → pick the mechanism that works on that host → apply → verify by reading the value back → patch PHP and WordPress → report.
+1. **Send the prompt above.** Nothing to install. If you want it installed permanently, [INSTALL.md](INSTALL.md) has the one command — that is optional, not a requirement.
+2. **Fill in the two lines**: which site and host, and whether you want it patched or you think it was already hit.
+3. **It measures, then stops.** Expect the four answers above before any file changes: the real PHP version and SAPI, the confirmed docroot, whether there is compromise, and the mechanism that works on that host. Only after you approve does it apply anything, verify by reading the value back, and patch PHP and WordPress.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
-It does not know your sites, holds no credentials and does not act on its own. What it changes is what the agent does: no `.htaccess` pasted onto an nginx box, no trusting a cached `200`, no calling a site "patched" without the advisory.
+It does not know your sites and holds no credentials. It acts only on the approval you give in step 3, and the phases change what the agent does: no `.htaccess` pasted onto an nginx box, no trusting a cached `200`, no calling a site "patched" without the advisory.
 
 ## Scope and safety
 
@@ -114,7 +114,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.5**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.6**.
 
 ## Licence
 

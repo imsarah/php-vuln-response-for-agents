@@ -30,7 +30,7 @@ My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want 
 
 **落手之前，要佢答你四樣：** 量到咩、打算改咩、點備份同點還原、邊啲要你主機商做。少一樣就係安全問題 —— 叫停個 run。
 
-**固定版本：** 將網址裡面 `main` 換成 `v1.9.5`，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
+**固定版本：** 將網址裡面 `main` 換成 `v1.9.6`，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
 
 ## 由邊度開始
 
@@ -41,12 +41,12 @@ My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want 
 
 ## 60 秒上手
 
-1. **裝一次** —— 一行指令，睇 [INSTALL.md](INSTALL.md)。Hermes、Claude Code、Grok（xAI），或者任何讀 markdown 嘅 agent 都用得。
-2. **講清楚邊個站、咩事**：例如「我個 WordPress 站有個 PHP CVE，幫我查同 patch，順手話我知實際行緊咩版本」。
-3. **Agent 自己行流程**：授權 → 量度真正版本同 SAPI → 確認 docroot → 查有冇已被入侵 → 揀返嗰個環境有效嘅方法 → 落手改 → 讀返個值驗證 → 追補丁 → 交報告。
+1. **發上面嗰句 prompt** —— 唔使裝。想長期裝做 skill 先睇 [INSTALL.md](INSTALL.md)，嗰個係可選，唔係必須。
+2. **填兩行**：邊個站、邊間 host，同埋你想 patch 佢，定係懷疑已經被入侵。
+3. **佢量度完就會停**：任何檔案改動之前，你要先收到上面講嘅四項 —— 真實 PHP 版本同 SAPI、確認咗嘅 docroot、有冇已被入侵、呢個環境邊種機制行得通。**你批准之後**，佢才落手改、讀返個值驗證、追 PHP 同 WordPress 補丁。
 4. **睇最後嗰份報告**：每個站四種狀態之一 —— 只係緩解、已修補、已修補但仍然保留緩解、仲係有漏洞 —— 同埋你要跟手做咩。
 
-**佢唔係咩**：佢唔知你有邊啲站、冇你任何憑證、亦唔會自己出手。佢改變嘅係 agent 嘅行為 —— 唔會喺 nginx 機亂貼 `.htaccess`、唔會信 cache 嘅假 `200`、唔會未對過 advisory 就話你「已修補」。
+佢唔知你有邊啲站、冇你任何憑證，**只會做你喺第 3 步批准嘅嘢**。佢改變嘅係 agent 嘅行為 —— 唔會喺 nginx 機亂貼 `.htaccess`、唔會信 cache 嘅假 `200`、唔會未對過 advisory 就話你「已修補」。
 
 ## 適用範圍
 
