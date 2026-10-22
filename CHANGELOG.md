@@ -2,6 +2,10 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.11 — 2026-10-22
+
+- **`CONTRIBUTING.md` claimed named reviewers and an anonymous-merge policy.** Neither existed: every review so far was done by AI systems (Claude, Hermes Agent) and commits are authored by the repository owner. The section now says who reviews, what an LLM review is not, and that measurement claims are traced through the changelog.
+
 ## 1.9.10 — 2026-10-22
 
 From a real WordPress-in-Docker run (official `wordpress:latest`, Apache + PHP 8.3.36, anonymous volume):
