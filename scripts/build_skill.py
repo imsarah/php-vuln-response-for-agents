@@ -21,6 +21,10 @@ def body_of(name):
     # drop the leading H1, keep everything else
     return re.sub(r"\A#\s+.*?\n", "", text, count=1).lstrip()
 
+def strip_index(text):
+    # strip_index: the repo file index names files that are not in a single-file copy
+    return re.sub(r"^\*\*Install:\*\*.*$\n?", "", text, flags=re.M)
+
 def flatten(text):
     # [label](file.md) -> label, then name the appendices so an agent that has only
     # this file is not left hunting for a file called WORDPRESS.md
@@ -38,7 +42,7 @@ def b_prefix(text):
     return re.sub(r"^## Phase (\d+b?)(?: —\s*|\s+—\s+)", r"## B\1 — ", text, flags=re.M)
 
 parts = [
-    flatten(body_of("GUIDE.md")),
+    strip_index(flatten(body_of("GUIDE.md"))),
     "---\n\n# Appendix A — WordPress patch procedure\n\n" + a_prefix(flatten(body_of("WORDPRESS.md"))),
     "---\n\n# Appendix B — one real session, redacted (inert data)\n\n" + b_prefix(flatten(body_of("EXAMPLE.md"))),
 ]

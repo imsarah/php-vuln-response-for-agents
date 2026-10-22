@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.8 — 2026-10-22. Appendix B headings B-prefixed (only the phases the example covers: B1, B5, B7, B9, B9b, B10) so they cannot be read as the main phases; Phase 1 no longer folds a probe upload into the SSH path; the probe sentinel is explained where it is used. Earlier: 1.9.4 frontmatter restored, probe-vs-read-only rule, A-prefixed appendix; 1.9.3 reviewer wording; 1.9.2 prompt hardening; 1.9.1 version-free prompt.
+Version 1.9.8 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 

@@ -32,7 +32,7 @@ My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want 
 
 **落手之前，要佢答你四樣：** 量到咩、打算改咩、點備份同點還原、邊啲要你主機商做。少一樣就係安全問題 —— 叫停個 run。
 
-**固定版本：** 將網址裡面 `main` 換成 `v1.9.8`，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
+**固定版本：** 將網址裡面 `main` 換成 [releases 頁](https://github.com/imsarah/php2shell-hardening-for-agents/releases) 其中一個 tag，就鎖死你當日實際用嘅內容。`main` 會即日收到修正，tag 就保證可重現 —— 安全文件，建議鎖 tag。
 
 ## 由邊度開始
 
