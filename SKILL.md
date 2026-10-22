@@ -321,6 +321,8 @@ Read both back with `wp config get DISALLOW_FILE_EDIT` / `wp config get DISALLOW
   </FilesMatch>
   ```
   On nginx this is a server config change — ask the host rather than shipping a `.htaccess` that does nothing (Phase 5 of the main guide); either way, verify by fetching a harmless test `.php` placed in `uploads/` (expect 403/404, then delete it) rather than assuming the rule applies.
+
+  An extension list is never complete — under some handler configurations a double extension like `shell.php.jpg` still executes — so treat the `.htaccess` rule as best-effort. The only real guarantee is turning the PHP handler off for that directory at the server level (Apache: `RemoveHandler` / `SetHandler none`; nginx: a `location` block denying `.php` under `uploads/`), which is a host change, not something you can do from a file on shared hosting.
 - **Audit administrators**, remove dormant ones, rotate their passwords; add 2FA (a plugin is acceptable).
 - **XML-RPC**: block only if you have confirmed nothing uses it (some apps and Jetpack do). If you block it, request `/xmlrpc.php` afterwards and confirm it is refused.
 - **After any suspected compromise**: rotate DB credentials, all salts (`wp config shuffle-salts`), admin passwords and hosting-panel credentials, then re-run the compromise check in Phase 4.
