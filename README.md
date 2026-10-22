@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.3-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.4-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -28,7 +28,8 @@ Paste this into an agent, fill in the two lines, send:
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
 and fetch every file it links to, then use it to fix my site. Run read-only commands
-only until I approve your plan — do not edit, delete or install anything before that.
+only until I approve your plan — do not edit, delete or install anything before that,
+and ask before uploading a probe or marker file (that is a write).
 Measure instead of assuming; ask me for anything you cannot detect.
 
 My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just want to patch.]
@@ -113,7 +114,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.3**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.4**.
 
 ## Licence
 

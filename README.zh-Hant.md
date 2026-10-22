@@ -19,7 +19,8 @@
 ```
 Read https://raw.githubusercontent.com/imsarah/php2shell-hardening-for-agents/main/SKILL.md
 and fetch every file it links to, then use it to fix my site. Run read-only commands
-only until I approve your plan — do not edit, delete or install anything before that.
+only until I approve your plan — do not edit, delete or install anything before that,
+and ask before uploading a probe or marker file (that is a write).
 Measure instead of assuming; ask me for anything you cannot detect.
 
 My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just want to patch.]

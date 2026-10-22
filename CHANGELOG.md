@@ -2,6 +2,15 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.4 — 2026-10-22
+
+Findings from the fresh-agent test the previous revision asked for (a clean subagent given only the prompt and the raw URL):
+
+- **"Read-only" contradicted the measurement phase.** Uploading a probe or docroot marker is a write. Phase 0 now says so explicitly, and the README prompt adds "ask before uploading a probe or marker file (that is a write)".
+- **The single file still pointed at other documents.** Link flattening left bare names like `WORDPRESS.md` in the text, which read as a missing file. `build_skill.py` now rewrites them to **Appendix A / Appendix B**, so a single-file reader is never hunting.
+- **"Only a patch is a patch" was easy to misread against Phase 9b.** One line added: a patched release is the fix for the CVE; the mitigation closes the demonstrated chain; they answer different questions.
+- **No publication date.** The version line now carries one.
+
 ## 1.9.3 — 2026-10-21
 
 - Prompt takes the reviewer's exact wording for the **two agent modes** (shell/SSH can act; chat-only hands over read-only commands) and drops every named agent from the prompt block.

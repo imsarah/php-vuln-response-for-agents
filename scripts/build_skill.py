@@ -18,8 +18,11 @@ def body_of(name):
     return re.sub(r"\A#\s+.*?\n", "", text, count=1).lstrip()
 
 def flatten(text):
-    # [label](file.md) -> label  (repo-relative links die inside an installed skill)
-    return re.sub(r"\[([^\]]+)\]\((?!https?:)([^)]*\.md)\)", r"\1", text)
+    # [label](file.md) -> label, then name the appendices so an agent that has only
+    # this file is not left hunting for a file called WORDPRESS.md
+    text = re.sub(r"\[([^\]]+)\]\((?!https?:)([^)]*\.md)\)", r"\1", text)
+    text = text.replace("WORDPRESS.md", "Appendix A").replace("EXAMPLE.md", "Appendix B")
+    return text
 
 parts = [
     flatten(body_of("GUIDE.md")),
