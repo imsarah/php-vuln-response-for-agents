@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.9 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
+Version 1.9.10 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -104,9 +104,11 @@ Do this **before** trusting a backup and before "hardening" a box you have not l
 | `apache2handler` (mod_php) | `.htaccess` → `php_value` if `AllowOverride` allows, else per-vhost `php.ini` | A disallowed `php_value` returns **500** — revert immediately. |
 | `fpm-fcgi` / `cgi-fcgi` | `.user.ini` in the docroot, else pool `php_admin_value` | `.user.ini` is cached for `user_ini.cache_ttl` (default 300s); re-probing inside that window shows the old value. |
 | **nginx + php-fpm** | **`.htaccess` is ignored entirely** | Use the pool `php_admin_value` or fastcgi `PHP_VALUE`. Never ship a `.htaccess` block to an nginx host and call it done. |
-| Docker (official `php` / `wordpress` images) | add a `.ini` under `conf.d/`, mount it as a volume, then **recreate** the container | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `restart` does not pick up a new mount — recreate. Apache variants are mod_php (`.htaccess` works); FPM variants are not. |
+| Docker (official `php` / `wordpress` images) | Apache variants: `.htaccess` → `php_value`, because `conf-enabled/docker-php.conf` sets `AllowOverride All` for `/var/www/`. FPM variants: a `.ini` under `conf.d/` (mounted, or written then **recreate**) | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `.htaccess` lives in the docroot, so it survives a recreate — a file written into the container does not. `restart` does not pick up a new mount; only recreate does. **Verify the override before assuming**: read `conf-enabled/docker-php.conf`, or fetch a file inside a directory you denied — `403` proves `.htaccess` is honoured. |
 | `cli-server` (PHP's built-in `php -S`) | the launch line itself: `php -d session.upload_progress.enabled=0 -S 127.0.0.1:PORT` or `php -c hardening.ini -S …` | `.htaccess` and `.user.ini` are **silently ignored** — no 500, no warning, the value just stays On (measured 2026-10-22). The setting lives in the process, so it reverts the moment anyone restarts without the flag: put the exact launch line in the hand-back. |
 | Unknown (`frankenphp`, `apache2filter`, …) | do not guess | Report the SAPI and ask, or use that product's own config. |
+
+- **Before any `docker run` that replaces a container, prove where the site actually lives.** If the docroot is an anonymous volume, a naive recreate attaches a **new empty volume** and the site looks wiped; the old volume survives only if you reattach it by name or copy the files back. Check with `docker inspect <name> --format '{{range .Mounts}}{{.Type}} {{.Name}}{{.Source}} -> {{.Destination}}{{end}}'` and quote that line in the hand-back.
 
 - **Silent failure is the dangerous case.** A `500` at least tells you the mechanism was rejected. Where the mechanism is ignored outright (`nginx` with `.htaccess`, `cli-server` with either file) you get a `200` and an unchanged value — so always read the value back, never infer success from the status code.
 

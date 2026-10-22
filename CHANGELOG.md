@@ -2,6 +2,14 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.10 — 2026-10-22 (no release yet)
+
+From a real WordPress-in-Docker run (official `wordpress:latest`, Apache + PHP 8.3.36, anonymous volume):
+
+- **The Docker row's "recreate" was the unsafe instruction.** In the official Apache images `conf-enabled/docker-php.conf` sets `AllowOverride All` for `/var/www/`, so `.htaccess php_value` works, needs no restart and survives a recreate. The row now says so, and says how to verify it (read that file, or fetch a file from a directory you denied — 403 proves it).
+- **Recreate now carries a warning**: if the docroot is an anonymous volume, a naive `docker run` attaches a new empty one and the site looks wiped. Check `docker inspect` mounts and quote that line in the hand-back.
+- **§0b now covers the official image**, which has no wp-cli: installing it is a write needing approval and vanishes on recreate; read the database with a PHP one-liner instead.
+
 ## 1.9.9 — 2026-10-22 (no release yet)
 
 Four gaps that two independent agents hit when they actually ran the procedure (one with shell access on a real PHP server, one in its own sandbox):

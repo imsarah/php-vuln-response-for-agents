@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.9-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.10-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -118,7 +118,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.9**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.10**.
 
 ## Licence
 

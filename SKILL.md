@@ -1,12 +1,12 @@
 ---
 name: php2shell-hardening-for-agents
 description: Use when hardening, patching or securing a PHP or WordPress site you did not build — SAPI-aware mitigation, wp-cli core/plugin/theme updates, cache-aware verification, and honest CVE patch tracking.
-version: 1.9.9
+version: 1.9.10
 license: MIT
 ---
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.9 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
+Version 1.9.10 — 2026-10-22. This document is the procedure; CHANGELOG.md holds the revision history.
 
 
 ---
@@ -107,9 +107,11 @@ Do this **before** trusting a backup and before "hardening" a box you have not l
 | `apache2handler` (mod_php) | `.htaccess` → `php_value` if `AllowOverride` allows, else per-vhost `php.ini` | A disallowed `php_value` returns **500** — revert immediately. |
 | `fpm-fcgi` / `cgi-fcgi` | `.user.ini` in the docroot, else pool `php_admin_value` | `.user.ini` is cached for `user_ini.cache_ttl` (default 300s); re-probing inside that window shows the old value. |
 | **nginx + php-fpm** | **`.htaccess` is ignored entirely** | Use the pool `php_admin_value` or fastcgi `PHP_VALUE`. Never ship a `.htaccess` block to an nginx host and call it done. |
-| Docker (official `php` / `wordpress` images) | add a `.ini` under `conf.d/`, mount it as a volume, then **recreate** the container | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `restart` does not pick up a new mount — recreate. Apache variants are mod_php (`.htaccess` works); FPM variants are not. |
+| Docker (official `php` / `wordpress` images) | Apache variants: `.htaccess` → `php_value`, because `conf-enabled/docker-php.conf` sets `AllowOverride All` for `/var/www/`. FPM variants: a `.ini` under `conf.d/` (mounted, or written then **recreate**) | These images ship **no `php.ini`** (`ini` is `false`); `conf.d/` is the scanned path. `.htaccess` lives in the docroot, so it survives a recreate — a file written into the container does not. `restart` does not pick up a new mount; only recreate does. **Verify the override before assuming**: read `conf-enabled/docker-php.conf`, or fetch a file inside a directory you denied — `403` proves `.htaccess` is honoured. |
 | `cli-server` (PHP's built-in `php -S`) | the launch line itself: `php -d session.upload_progress.enabled=0 -S 127.0.0.1:PORT` or `php -c hardening.ini -S …` | `.htaccess` and `.user.ini` are **silently ignored** — no 500, no warning, the value just stays On (measured 2026-10-22). The setting lives in the process, so it reverts the moment anyone restarts without the flag: put the exact launch line in the hand-back. |
 | Unknown (`frankenphp`, `apache2filter`, …) | do not guess | Report the SAPI and ask, or use that product's own config. |
+
+- **Before any `docker run` that replaces a container, prove where the site actually lives.** If the docroot is an anonymous volume, a naive recreate attaches a **new empty volume** and the site looks wiped; the old volume survives only if you reattach it by name or copy the files back. Check with `docker inspect <name> --format '{{range .Mounts}}{{.Type}} {{.Name}}{{.Source}} -> {{.Destination}}{{end}}'` and quote that line in the hand-back.
 
 - **Silent failure is the dangerous case.** A `500` at least tells you the mechanism was rejected. Where the mechanism is ignored outright (`nginx` with `.htaccess`, `cli-server` with either file) you get a `200` and an unchanged value — so always read the value back, never infer success from the status code.
 
@@ -240,9 +242,12 @@ wp db size --tables --human          # Before you dump
 - **Staging is not optional for plugin updates.** Clone docroot (rsync) and import the dump. If the account cannot create a database, import into the *same* database under a prefix (`stg_`) and point the staging `wp-config.php` at it, then set `siteurl`/`home` to the staging hostname. Undo it afterwards by dropping the prefixed tables.
 - Check the PHP branch against the plugins **before** switching: `wp plugin list` plus the plugin's "requires PHP" header. A plugin that declares `Requires PHP: 7.4` may still break on 8.3.
 
-## A0b. When there is no wp-cli (shared hosting, no SSH)
+## A0b. When there is no wp-cli (shared hosting, no SSH, official Docker image)
 
-Plenty of WordPress sites cannot run `wp` at all. The procedure survives without it, but you lose the dry run and the precise rollback — so compensate with the stash and the staging copy.
+Plenty of WordPress sites cannot run `wp` at all — including the **official `wordpress` Docker image**, which ships WordPress, Apache and PHP but no wp-cli. The procedure survives without it, but you lose the dry run and the precise rollback — so compensate with the stash and the staging copy.
+
+- **Installing wp-cli is itself a write.** Downloading a phar into the container changes the system you were asked to inspect; it needs the same approval as any other change, and on a container without a mounted volume it disappears on recreate anyway.
+- **Reading the database without a client**: a PHP one-liner over stdin is enough (`docker exec -i <name> php -r '…'`), and it keeps credentials out of the transcript if you read them from `wp-config.php` inside that same process.
 
 - **Backup from the panel first**: files (or at least `wp-content`) *and* the database export. A dashboard update cannot be undone by the host.
 - **Stash a copy of the plugin folder and its version** before updating it (`wp-content/plugins/<slug>` → download via File Manager). This is your rollback: re-upload the old folder, or use **Plugins → Add New → Upload Plugin** with the previous zip.
