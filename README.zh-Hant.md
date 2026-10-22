@@ -69,7 +69,7 @@ My site: [WordPress / 原生 PHP], on [host]. [I think it was hacked / I just wa
 ## 已驗證／未驗證
 
 - **已驗證**：LiteSpeed 共享主機（CloudLinux alt-php，逐目錄 `.htaccess`）、cPanel UAPI／Fileman、Apache 後端的 PHP-FPM（`.user.ini`，300 秒 TTL）、Docker 官方 `php`／`wordpress` 映像（`conf.d`），以及重現公開 PoC 的實驗環境。
-- **未驗證**：無 pool 存取權的 nginx、FrankenPHP、Windows／IIS、cPanel 與 SureServer 類型以外的控制台。指南說明了該情況的處理方式，但不宣稱曾實際演練。
+- **未驗證**：無 pool 存取權的 nginx、FrankenPHP、Windows／IIS、WordPress multisite、沒有 `wp-cli` 的主機（WORDPRESS.md 的 dashboard 做法是對著介面寫的，而非實際演練）、cPanel 與 SureServer 類型以外的控制台。指南說明了該情況的處理方式，但不宣稱曾實際演練。
 
 ## 已知限制
 

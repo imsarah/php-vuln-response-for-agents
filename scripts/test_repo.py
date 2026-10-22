@@ -58,8 +58,16 @@ if skill is None:
 else:
     # c) single-file reader must never be sent to files it does not have.
     problems = [s for s in ("# Appendix A", "# Appendix B") if s not in skill]
-    problems += [f"mentions {s}" for s in ("WORDPRESS.md", "EXAMPLE.md") if s in skill]
+    siblings = ("WORDPRESS.md", "EXAMPLE.md", "INSTALL.md", "README.md",
+                "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md")
+    problems += [f"mentions {s}" for s in siblings if s in skill]
     check("c SKILL.md appendices, no sibling-file names", not problems, "; ".join(problems))
+
+    # j) Appendix B narrates "Phase N"; the build must renumber them B-prefixed, or
+    # inside one file they read as the main phases. CHANGELOG 1.9.5 claims this guard.
+    apxb = skill[skill.index("# Appendix B"):]
+    stray = re.findall(r"^## Phase .*$", apxb, re.M)
+    check("j Appendix B headings are B-prefixed", not stray, "; ".join(stray[:3]))
 
     # e) no relative markdown links to .md files (absolute http(s) links are fine).
     rel = [m.group(0) for m in re.finditer(r"\]\((?!https?:)[^)\s]*\.md(?:#[^)]*)?\)", skill)]

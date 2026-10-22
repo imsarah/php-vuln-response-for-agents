@@ -9,7 +9,7 @@ This is the session the playbook was distilled from, written up so you can see w
 
 ## Phase 1 — measure, with the least intrusive method
 
-SSH was not enabled on the account, and the panel did not expose the ini values, so a web probe was the last resort. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
+Direct SSH was not enabled on the account, and the panel did not expose the ini values, so for the version read a web probe was the least intrusive option. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
 
 ```php
 <?php
@@ -37,7 +37,7 @@ A version switch resets the extension set. On this host, moving to 8.3 without `
 
 ## Phase 9 — staging, then production, then the thing nobody predicted
 
-Staging was a rsync of the docroot (877 MB) plus a database dump imported into the same database under a `stg_` prefix — the account could not create a new database. `wp plugin update --all` then produced the only real incompatibility of the day: one plugin's new major version removed a file the theme still required, which broke `wp-login.php` with a warning on every request. Downgrading that single plugin fixed it, and the production run used `--exclude` for exactly that plugin.
+The `rsync` and `wp-cli` steps below ran in the hosting panel's built-in terminal — the account's only shell, since direct SSH was never enabled. Staging was a rsync of the docroot (877 MB) plus a database dump imported into the same database under a `stg_` prefix — the account could not create a new database. `wp plugin update --all` then produced the only real incompatibility of the day: one plugin's new major version removed a file the theme still required, which broke `wp-login.php` with a warning on every request. Downgrading that single plugin fixed it, and the production run used `--exclude` for exactly that plugin.
 
 Production was switched in one window: PHP 7.4 → 8.3, sixteen plugins updated, cache purged (it had been serving a stale `HIT` for over two hours), every page compared against staging by text diff — identical — and the probe re-run to read the new values back.
 
@@ -56,6 +56,6 @@ The conclusion was not "the patch failed". It was that this PoC attacks a differ
 
 ## Phase 10 — the hand-back
 
-Four states, one line each: patched and mitigation retained (the main site), patched (the second host account), mitigated only (an account where the host had not shipped the patched build, with a support ticket drafted), and untouched-with-reason (a site that no longer belonged to the user).
+Three states, one line each: patched and mitigation retained by design (the main site), patched (the second host account), and mitigated only (an account where the host had not shipped the patched build, with a support ticket drafted).
 
 That is the whole procedure. Everything in the phases exists because one of these steps went wrong first.

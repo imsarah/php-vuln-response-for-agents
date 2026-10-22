@@ -71,7 +71,7 @@ echo json_encode([
 
 ## Phase 2 — Identify the target (confirm the docroot)
 
-- **Baseline first:** status code *and* body hash — `curl -s https://DOMAIN/ | sha256sum` — so a later cached or defaced 200 is not mistaken for success.
+- **Baseline first:** status code, and the body hash *of a static asset* — `curl -s https://DOMAIN/robots.txt | sha256sum` (or the theme stylesheet) — so a later cached or defaced 200 is not mistaken for success. Do not hash the home page: a WordPress page carries per-request nonces and cart state, so its hash changes on every request and a later "different hash" means nothing. Hash something the site serves byte-for-byte, or normalise the dynamic parts out first.
 - `dig +short DOMAIN NS; dig +short DOMAIN A` (one type per query — `dig` keeps only the last type given); `curl -sI https://DOMAIN/`; record `server:`, cache headers (`cf-ray`, `x-litespeed-cache`, `surecache-status`). Cloudflare is not the only CDN (QUIC.cloud, Sucuri, Fastly).
 - **Confirm which directory serves the domain — read-only first.** In order: the running process (`ss -ltnp` → the pid → `/proc/<pid>/cmdline`), the server config (`DocumentRoot`, `root`, a `-t` flag), the panel's domain page, or the user's answer. Only if none of those exist, upload a harmless `.html` marker — **that is a write**, so say so and get the yes first, even though the operator was promised the docroot is confirmed before approval. A 404 for your probe usually means **wrong docroot** (addon domain, subdomain, `public_html` vs site folder) or a cached 404 — not a routing quirk, and not proof the upload failed.
 - Detect the stack by presence, not by reading secrets: `wp-config.php` **exists** (WordPress), `artisan` + `public/index.php` (Laravel), `index.php` alone. Do not open `wp-config.php` — it puts database credentials in your transcript.
@@ -148,7 +148,7 @@ Give these steps in the user's language, in this order, and warn about the inter
 
 - **Bypass caches:** random query string, and hit the origin (host header against the server IP, or the panel's alias hostname). A cached 200 hides an origin 500.
 - **Read the value back through PHP:** `ini_get()` returns `""` for `Off` and `"0"` for `0` — compare booleans, not strings.
-- **Compare the body**, not only the status: same status with a different hash means something changed. Use `GET` for baselines; `HEAD` can behave differently behind a WAF.
+- **Compare the body**, not only the status: same status with a different hash means something changed — but hash a static asset (`/robots.txt`, the theme stylesheet), not a rendered page, whose per-request nonces and cart state change the hash every time regardless of what you did. If you must diff a dynamic page, strip the varying tokens out first. Use `GET` for baselines; `HEAD` can behave differently behind a WAF.
 - **Do not exercise side-effecting flows on a live shop** — add-to-cart creates carts and triggers abandoned-cart mail; login attempts can trip fail2ban against your IP. Use a side-effect-free PHP page (REST index, `wp-login.php`) and say what you did *not* test.
 - **Check each docroot separately** and report the read-back values per site.
 
@@ -170,7 +170,14 @@ Give these steps in the user's language, in this order, and warn about the inter
 When a working PoC for the CVE is public, use it to *measure your posture*, never to attack production.
 
 0. **Get the Phase 0 tooling authorisation first**, and read the PoC source — `Dockerfile`, payload, any install script — before you build it. A Dockerfile runs arbitrary `RUN` steps with build privileges and can reach the network during the build; binding the container to `127.0.0.1` does not contain that.
-1. **Build the target in a disposable container**, from a copy on a machine you control: `docker build --network=none -t lab . && docker run -d -p 127.0.0.1:18080:80 lab` (drop `--network=none` only if the build genuinely needs packages, and then say so; it does not go on `run`, where it would leave the published port unreachable and the PoC measuring nothing). Never mount the Docker socket into the lab, never run it on the production host's Docker daemon if you can use another machine.
+1. **Build the target in a disposable container**, from a copy on a machine you control, with no network during the build: `docker build --network=none -t lab .` (drop `--network=none` only if the build genuinely needs packages, and then say so). Then give the lab its own isolated network and run the target with nothing published — an `--internal` network has no route to the host or the internet, so the container cannot phone home and nothing outside can reach it, which `--network=none` on `run` cannot give you because the PoC client would then have no way to talk to the target either:
+
+   ```bash
+   docker network create --internal labnet
+   docker run -d --name target --network labnet lab
+   ```
+
+   Drive the PoC from a second container on the same network, addressing the target by name: `docker run --rm --network labnet poc-client http://target:80/...`. Never mount the Docker socket into the lab, never run it on the production host's Docker daemon if you can use another machine.
 2. **Reproduce the vulnerable case first.** If the PoC cannot pop the pre-patch build, it is not measuring anything — stop and read it before drawing conclusions.
 3. **Run the 2×2 matrix**, changing one variable at a time: `{pre-patch, patched} × {mitigation off, mitigation on}`. Record the exact command and the literal output of each cell.
 4. **Interpret honestly.** If the exploit still succeeds on the patched build with the mitigation off, the PoC is not exercising the patched path — the mitigation, not the version, is what closes it. Say that in the report instead of quoting the version number.
@@ -365,7 +372,7 @@ This is the session the playbook was distilled from, written up so you can see w
 
 ## B1 — measure, with the least intrusive method
 
-SSH was not enabled on the account, and the panel did not expose the ini values, so a web probe was the last resort. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
+Direct SSH was not enabled on the account, and the panel did not expose the ini values, so for the version read a web probe was the least intrusive option. It went into a new directory (not `uploads/`, which denies PHP), behind a secret header, and returned only what was needed:
 
 ```php
 <?php
@@ -393,7 +400,7 @@ A version switch resets the extension set. On this host, moving to 8.3 without `
 
 ## B9 — staging, then production, then the thing nobody predicted
 
-Staging was a rsync of the docroot (877 MB) plus a database dump imported into the same database under a `stg_` prefix — the account could not create a new database. `wp plugin update --all` then produced the only real incompatibility of the day: one plugin's new major version removed a file the theme still required, which broke `wp-login.php` with a warning on every request. Downgrading that single plugin fixed it, and the production run used `--exclude` for exactly that plugin.
+The `rsync` and `wp-cli` steps below ran in the hosting panel's built-in terminal — the account's only shell, since direct SSH was never enabled. Staging was a rsync of the docroot (877 MB) plus a database dump imported into the same database under a `stg_` prefix — the account could not create a new database. `wp plugin update --all` then produced the only real incompatibility of the day: one plugin's new major version removed a file the theme still required, which broke `wp-login.php` with a warning on every request. Downgrading that single plugin fixed it, and the production run used `--exclude` for exactly that plugin.
 
 Production was switched in one window: PHP 7.4 → 8.3, sixteen plugins updated, cache purged (it had been serving a stale `HIT` for over two hours), every page compared against staging by text diff — identical — and the probe re-run to read the new values back.
 
@@ -412,6 +419,6 @@ The conclusion was not "the patch failed". It was that this PoC attacks a differ
 
 ## B10 — the hand-back
 
-Four states, one line each: patched and mitigation retained (the main site), patched (the second host account), mitigated only (an account where the host had not shipped the patched build, with a support ticket drafted), and untouched-with-reason (a site that no longer belonged to the user).
+Three states, one line each: patched and mitigation retained by design (the main site), patched (the second host account), and mitigated only (an account where the host had not shipped the patched build, with a support ticket drafted).
 
 That is the whole procedure. Everything in the phases exists because one of these steps went wrong first.

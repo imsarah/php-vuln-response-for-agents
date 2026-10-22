@@ -69,7 +69,7 @@ My site: [WordPress / 純 PHP], on [host]. [I think it was hacked / I just want 
 ## 驗證過 / 未驗證
 
 - **驗證過**：LiteSpeed 共享主機（CloudLinux alt-php，用 `.htaccess`）、cPanel UAPI／Fileman、PHP-FPM behind Apache（`.user.ini`，300 秒 TTL）、Docker 官方 `php`／`wordpress` image（`conf.d`）、公開 PoC 嘅 lab。
-- **未驗證**：冇 pool access 嘅 nginx、FrankenPHP、Windows／IIS、cPanel 同 SureServer 以外嘅 panel。呢啲情況 guide 有講點做，但**唔會聲稱實測過**。
+- **未驗證**：冇 pool access 嘅 nginx、FrankenPHP、Windows／IIS、WordPress multisite、冇 `wp-cli` 嘅主機（WORDPRESS.md 嘅 dashboard 做法係對住介面寫、唔係真跑過）、cPanel 同 SureServer 以外嘅 panel。呢啲情況 guide 有講點做，但**唔會聲稱實測過**。
 
 ## 已知限制
 
