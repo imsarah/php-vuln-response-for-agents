@@ -2,7 +2,7 @@
 
 Audience: an AI agent acting for a user who owns (or manages) PHP/WordPress sites and cannot fix them personally. Phases are ordered; each ends with a verification step. Never report a result you have not measured.
 
-Version 1.9.6 — 2026-10-22. Appendix B headings B-prefixed (only the phases the example covers: B1, B5, B7, B9, B9b, B10) so they cannot be read as the main phases; Phase 1 no longer folds a probe upload into the SSH path; the probe sentinel is explained where it is used. Earlier: 1.9.4 frontmatter restored, probe-vs-read-only rule, A-prefixed appendix; 1.9.3 reviewer wording; 1.9.2 prompt hardening; 1.9.1 version-free prompt.
+Version 1.9.7 — 2026-10-22. Appendix B headings B-prefixed (only the phases the example covers: B1, B5, B7, B9, B9b, B10) so they cannot be read as the main phases; Phase 1 no longer folds a probe upload into the SSH path; the probe sentinel is explained where it is used. Earlier: 1.9.4 frontmatter restored, probe-vs-read-only rule, A-prefixed appendix; 1.9.3 reviewer wording; 1.9.2 prompt hardening; 1.9.1 version-free prompt.
 
 **Install:** [INSTALL.md](INSTALL.md) · **WordPress:** [WORDPRESS.md](WORDPRESS.md) · **Worked example:** [EXAMPLE.md](EXAMPLE.md) · **Changes:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -75,6 +75,8 @@ echo json_encode([
 - Note whether the site is commerce: it changes what you may test and what you may change.
 
 ## Phase 3 — Access, ranked by how little the user hands over
+
+**This document holds no credentials, and you must never ask for one in a chat log.** Access comes from the user, for this task only: state what you need and why, ask for the least that works, have it created for the named sites only, and have it revoked when you are done. Whatever is handed over is your blast radius — say that out loud before you take it, so the user is choosing it.
 
 1. **SSH key** — the smallest blast radius for a known host.
 2. **Session-scoped SFTP/FTPS account** limited to the site's docroot; user deletes it afterwards. Plain FTP is cleartext: refuse it.

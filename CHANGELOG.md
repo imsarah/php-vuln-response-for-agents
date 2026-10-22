@@ -2,6 +2,11 @@
 
 All notable changes to this playbook. Versions are document revisions, not releases of any software.
 
+## 1.9.7 — 2026-10-22
+
+- **"Holds no credentials" was misleading for the shell/SSH mode.** True of the document, false of the agent you hand a key to. README (EN/Cantonese/zh-Hant), `INSTALL.md` and Phase 3 now say: the document ships no credentials, **you supply the access**, give the least that works, back up first, revoke afterwards — and whatever you hand over is the agent's blast radius.
+- Phase 3 also states plainly that credentials must never be pasted into a chat log.
+
 ## 1.9.6 — 2026-10-22
 
 - **The 60-second section contradicted the prompt above it.** Step 1 said "install it once — one command" while the prompt says nothing needs installing. Step 1 now sends the prompt and calls installation optional.

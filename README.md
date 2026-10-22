@@ -3,7 +3,7 @@
 </p>
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.9.6-informational.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.7-informational.svg)](CHANGELOG.md)
 [![Security policy](https://img.shields.io/badge/security-policy-green.svg)](SECURITY.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -39,7 +39,7 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 
 **Before anything changes, expect four answers:** what it measured, what it will change, how it will back up and roll back, and what needs your host rather than you. Missing any of them is a safety failure — stop the run.
 
-**Fixed revision:** replace `main` in the URL with `v1.9.6` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
+**Fixed revision:** replace `main` in the URL with `v1.9.7` to pin the exact text you ran. `main` takes corrections the same day; a tag is reproducible. For a security document, pin it.
 
 ## Start here
 
@@ -55,7 +55,9 @@ My site: [WordPress / plain PHP], on [host]. [I think it was hacked / I just wan
 3. **It measures, then stops.** Expect the four answers above before any file changes: the real PHP version and SAPI, the confirmed docroot, whether there is compromise, and the mechanism that works on that host. Only after you approve does it apply anything, verify by reading the value back, and patch PHP and WordPress.
 4. **Read the hand-back**: four states per site — mitigated only, patched, patched with the mitigation retained, still vulnerable — plus what you must do next.
 
-It does not know your sites and holds no credentials. It acts only on the approval you give in step 3, and the phases change what the agent does: no `.htaccess` pasted onto an nginx box, no trusting a cached `200`, no calling a site "patched" without the advisory.
+**You supply the access.** This document holds no credentials and none are bundled: there is nothing in it to leak. That means the agent can only reach what you hand it, and whatever you hand it is its blast radius. Give the least that works — a session-scoped SFTP account, a key you can revoke, or a panel token you will delete afterwards, not your master password — take a backup first, and revoke when it is done.
+
+It acts only on the approval you give in step 3, and the phases change what the agent does: no `.htaccess` pasted onto an nginx box, no trusting a cached `200`, no calling a site "patched" without the advisory.
 
 ## Scope and safety
 
@@ -114,7 +116,7 @@ Paste `GUIDE.md` into the agent's context, or add it as a skill/instruction file
 
 ## Version history
 
-Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.6**.
+Canonical history, with the review findings for each revision: [CHANGELOG.md](CHANGELOG.md). Current revision **1.9.7**.
 
 ## Licence
 
